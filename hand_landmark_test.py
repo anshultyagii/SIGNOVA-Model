@@ -9,12 +9,10 @@ mp_hands = mp.solutions.hands
 mp_face = mp.solutions.face_mesh
 
 cap = cv2.VideoCapture(0)
-cv2.namedWindow("SignSpeak AI - Holistic Detection", cv2.WINDOW_NORMAL)
-cv2.setWindowProperty(
-    "SignSpeak AI - Holistic Detection",
-    cv2.WND_PROP_FULLSCREEN,
-    cv2.WINDOW_FULLSCREEN
-)
+window_name = "SignSpeak AI - Holistic Detection"
+
+cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+cv2.resizeWindow(window_name, 1000, 700)
 
 with mp_holistic.Holistic(
     static_image_mode=False,

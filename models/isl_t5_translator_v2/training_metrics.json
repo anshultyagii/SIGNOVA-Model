@@ -1,0 +1,228 @@
+{
+  "base_model": "t5-small",
+  "seed": 42,
+  "epochs": 10,
+  "learning_rate": 0.0005,
+  "batch_size": 8,
+  "device": "cpu",
+  "metrics": {
+    "exact_match": 0.9688,
+    "bleu": 98.74,
+    "rouge_l": 98.44,
+    "sample_count": 32,
+    "avg_inference_ms": 191.23,
+    "training_time_seconds": 599.72,
+    "epochs": 10,
+    "train_sample_count": 130,
+    "test_sample_count": 32,
+    "final_loss": 0.0289
+  },
+  "loss_history": [
+    1.1837,
+    0.258,
+    0.1663,
+    0.0914,
+    0.0853,
+    0.0798,
+    0.0518,
+    0.0398,
+    0.0786,
+    0.0289
+  ],
+  "qualitative_review": [
+    {
+      "gloss": "You",
+      "prediction": "You.",
+      "reference": "You.",
+      "exact_match": true
+    },
+    {
+      "gloss": "You Food Eat",
+      "prediction": "You eat food.",
+      "reference": "You eat food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Water Give",
+      "prediction": "We will give water.",
+      "reference": "We will give water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "My Food",
+      "prediction": "My food.",
+      "reference": "My food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Eight Food",
+      "prediction": "Eight foods.",
+      "reference": "Eight foods.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Water Want_Desire_Wish_For",
+      "prediction": "We want water.",
+      "reference": "We want water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Four Food",
+      "prediction": "Four foods.",
+      "reference": "Four foods.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Help You",
+      "prediction": "We will help you.",
+      "reference": "We will help you.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Five Milk",
+      "prediction": "Five milks.",
+      "reference": "Five milks.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Go",
+      "prediction": "Go.",
+      "reference": "Go.",
+      "exact_match": true
+    },
+    {
+      "gloss": "What Food",
+      "prediction": "What is that food?",
+      "reference": "What is that food?",
+      "exact_match": true
+    },
+    {
+      "gloss": "Seven Water",
+      "prediction": "Seven waters.",
+      "reference": "Seven waters.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Two Food Want_Desire_Wish_For",
+      "prediction": "I want two foods.",
+      "reference": "I want two foods.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Drink Water",
+      "prediction": "I drink water.",
+      "reference": "I drink water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Milk Drink",
+      "prediction": "We drink milk.",
+      "reference": "We drink milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Where My Milk",
+      "prediction": "Where is my milk?",
+      "reference": "Where is my milk?",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Want_Desire_Wish_For Water",
+      "prediction": "I want water.",
+      "reference": "I want water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Eat Food",
+      "prediction": "We eat food.",
+      "reference": "We eat food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Four Water",
+      "prediction": "Four waters.",
+      "reference": "Four water.",
+      "exact_match": false
+    },
+    {
+      "gloss": "My Water Where",
+      "prediction": "Where is my water?",
+      "reference": "Where is my water?",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Drink",
+      "prediction": "I drink.",
+      "reference": "I drink.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Six",
+      "prediction": "Six.",
+      "reference": "Six.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Three Water",
+      "prediction": "Three waters.",
+      "reference": "Three waters.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Milk Drink",
+      "prediction": "I drink milk.",
+      "reference": "I drink milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Want_Desire_Wish_For Milk",
+      "prediction": "I want milk.",
+      "reference": "I want milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "You Drink Water",
+      "prediction": "You drink water.",
+      "reference": "You drink water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Ten",
+      "prediction": "Ten.",
+      "reference": "Ten.",
+      "exact_match": true
+    },
+    {
+      "gloss": "My Milk Where",
+      "prediction": "Where is my milk?",
+      "reference": "Where is my milk?",
+      "exact_match": true
+    },
+    {
+      "gloss": "One",
+      "prediction": "One.",
+      "reference": "One.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Give I_Me Two Food",
+      "prediction": "Give me two foods.",
+      "reference": "Give me two foods.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Give I_Me One Water",
+      "prediction": "Give me one water.",
+      "reference": "Give me one water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Seven Milk",
+      "prediction": "Seven milks.",
+      "reference": "Seven milks.",
+      "exact_match": true
+    }
+  ],
+  "timestamp": "2026-10-15 23:05:31",
+  "linguistic_disclaimer": "These metrics evaluate lexical and string overlap on a curated ISL grammar set. They do not by themselves establish conversational fluency in Indian Sign Language."
+}

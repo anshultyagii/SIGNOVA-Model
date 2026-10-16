@@ -19,6 +19,7 @@ from pathlib import Path
 import sys
 import threading
 import time
+from typing import List, Optional
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -29,6 +30,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.recognition.pipeline import ExemplarRecognitionEngine
+from src.recognition.gloss_buffer import GlossSequenceBuffer
+from src.translation import ISLToEnglishTranslator
 
 DEFAULT_GALLERY_DIR = PROJECT_ROOT / "dataset" / "processed_corrected"
 
@@ -92,15 +95,28 @@ class AsyncPredictor:
                     features=features,
                     presence=presence,
                     query_name="webcam_live",
-                    top_k=1
+                    top_k=3          # always get top-3 for console diagnostics
                 )
                 candidates = res.get("candidates", [])
+
+                # ── Diagnostic: print top-3 to console ──────────────────────
+                # The UI only shows candidates[0]; this output helps diagnose
+                # confusion without changing the displayed prediction.
+                if candidates:
+                    print(f"[Recognition] Top-3 results  (query {res.get('query_frames','?')}f):")
+                    for c in candidates:
+                        bar = '#' * int(c['similarity'] * 20)
+                        print(f"   #{c['rank']}  {c['label']:<28}  "
+                              f"sim={c['similarity']:.3f}  dist={c['distance']:.4f}  [{bar:<20}]")
+                else:
+                    print("[Recognition] No candidates returned.")
+
                 with self.lock:
                     if candidates:
                         self.last_label      = candidates[0]["label"]
                         self.last_confidence = candidates[0]["similarity"]
                     else:
-                        self.last_label      = "—"
+                        self.last_label      = "-"
                         self.last_confidence = 0.0
                     self.last_update_time = time.time()
             except Exception as exc:
@@ -131,13 +147,15 @@ def draw_hud(
     confidence: float,
     is_busy: bool,
     gesture_frames: int,
-    fps: float
+    fps: float,
+    gloss_sequence: Optional[List[str]] = None,
+    last_translation: str = ""
 ) -> np.ndarray:
     """Draws a clean single-result HUD on the display frame."""
     h, w = frame.shape[:2]
 
     panel_w = min(400, int(w * 0.40))
-    panel_h = 220
+    panel_h = 280
     panel_x = w - panel_w - 16
     panel_y = 16
 
@@ -224,11 +242,35 @@ def draw_hud(
                     (panel_x + 12, panel_y + 152),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.37, (110, 110, 125), 1)
 
+    # Gloss Sequence accumulator display
+    cv2.line(frame, (panel_x + 12, panel_y + 170),
+             (panel_x + panel_w - 12, panel_y + 170), (55, 55, 68), 1)
+    if gloss_sequence:
+        seq_str = " -> ".join(gloss_sequence)
+        if len(seq_str) > 28:
+            seq_str = "..." + seq_str[-25:]
+        cv2.putText(frame, f"Seq: {seq_str}", (panel_x + 12, panel_y + 190),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.40, (0, 220, 255), 1, cv2.LINE_AA)
+    else:
+        cv2.putText(frame, "Seq: (idle / waiting)", (panel_x + 12, panel_y + 190),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.36, (120, 120, 135), 1, cv2.LINE_AA)
+
+    # English Translation display
+    if last_translation:
+        trans_str = last_translation
+        if len(trans_str) > 28:
+            trans_str = trans_str[:25] + "..."
+        cv2.putText(frame, f"Eng: {trans_str}", (panel_x + 12, panel_y + 212),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.40, (0, 255, 180), 1, cv2.LINE_AA)
+    else:
+        cv2.putText(frame, "Eng: (waiting for pause)", (panel_x + 12, panel_y + 212),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.36, (120, 120, 135), 1, cv2.LINE_AA)
+
     # Footer: FPS + controls
-    cv2.line(frame, (panel_x + 12, panel_y + panel_h - 32),
-             (panel_x + panel_w - 12, panel_y + panel_h - 32), (55, 55, 68), 1)
+    cv2.line(frame, (panel_x + 12, panel_y + panel_h - 28),
+             (panel_x + panel_w - 12, panel_y + panel_h - 28), (55, 55, 68), 1)
     cv2.putText(frame, f"{fps:.0f} FPS  |  [C] Clear  [SPC] Pause  [Q] Quit",
-                (panel_x + 12, panel_y + panel_h - 14),
+                (panel_x + 12, panel_y + panel_h - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.34, (130, 130, 145), 1)
 
     return frame
@@ -313,6 +355,10 @@ def run_live_webcam(
     last_label      = ""
     last_conf       = 0.0
     is_busy         = False
+    gloss_buffer    = GlossSequenceBuffer(idle_timeout_seconds=1.5, min_confidence=0.50)
+    translator      = ISLToEnglishTranslator()
+    last_translation = ""
+    last_consumed_update_time = 0.0
 
     with mp_holistic.Holistic(
         static_image_mode=False,
@@ -344,8 +390,9 @@ def run_live_webcam(
             else:
                 proc_frame = raw_frame
 
-            # Display frame = horizontally mirrored for natural user feedback
-            display_frame = cv2.flip(proc_frame, 1)
+            # draw_frame starts as proc_frame (same geometry MediaPipe processed);
+            # we will flip it AFTER drawing landmarks so the overlay is exact.
+            draw_frame = proc_frame.copy()
 
             if not is_paused:
                 rgb     = cv2.cvtColor(proc_frame, cv2.COLOR_BGR2RGB)
@@ -377,6 +424,7 @@ def run_live_webcam(
                             onset_counter = 0
                             gesture_feats = []
                             gesture_pres  = []
+                            gloss_buffer.mark_gesture_boundary()
                             # Seed gesture buffer with the onset frames already seen
                             # (they have been discarded; we simply start fresh here)
                     else:
@@ -419,28 +467,30 @@ def run_live_webcam(
                         gesture_feats = []
                         gesture_pres  = []
 
-            # ── Draw landmarks on DISPLAY (mirrored) frame ────────────────────
-            # Note: drawing on display_frame is fine — it is only for rendering,
-            # not for feature extraction.  MediaPipe landmark coords are still in
-            # the coordinate space of proc_frame; since display_frame is a mirror
-            # we must flip x-coords for correct overlay placement.
-            # For simplicity we re-process the display frame for drawing only
-            # by flipping landmark x: each lm.x → 1-lm.x via mp_draw's transform.
-            # The simplest correct approach: just overlay landmarks unflipped on
-            # display_frame (they will appear on the visually correct position
-            # because display_frame is already flipped).
+            # ── Draw landmarks on UNFLIPPED draw_frame, then flip for display ──
+            # MediaPipe landmark coords are normalized [0,1] relative to proc_frame
+            # (the unflipped frame).  mp_draw.draw_landmarks multiplies lm.x * W
+            # and lm.y * H to get pixel positions.  Drawing must therefore happen
+            # on a frame with the SAME geometry as proc_frame — otherwise the
+            # x-coordinates are reflected and every landmark appears on the wrong
+            # side of the hand.
+            #
+            # Fix: draw on draw_frame (a copy of proc_frame), then mirror the
+            # whole annotated frame once → display_frame.  This way:
+            #   • landmarks sit exactly where MediaPipe found them, and
+            #   • the final view is still mirrored (natural webcam UX).
 
             if results is not None:
                 if results.pose_landmarks:
                     mp_draw.draw_landmarks(
-                        display_frame,
+                        draw_frame,
                         results.pose_landmarks,
                         mp_holistic.POSE_CONNECTIONS,
                         landmark_drawing_spec=mp_styles.get_default_pose_landmarks_style()
                     )
                 if results.left_hand_landmarks:
                     mp_draw.draw_landmarks(
-                        display_frame,
+                        draw_frame,
                         results.left_hand_landmarks,
                         mp_holistic.HAND_CONNECTIONS,
                         mp_draw.DrawingSpec(color=(0, 255, 120), thickness=2, circle_radius=2),
@@ -448,25 +498,49 @@ def run_live_webcam(
                     )
                 if results.right_hand_landmarks:
                     mp_draw.draw_landmarks(
-                        display_frame,
+                        draw_frame,
                         results.right_hand_landmarks,
                         mp_holistic.HAND_CONNECTIONS,
                         mp_draw.DrawingSpec(color=(60, 130, 255), thickness=2, circle_radius=2),
                         mp_draw.DrawingSpec(color=(40, 100, 230), thickness=2)
                     )
 
-            # ── Retrieve prediction and render HUD ────────────────────────────
-            last_label, last_conf, is_busy, _ = predictor.get_result()
+            # Flip the fully-annotated frame once → mirrored display (natural UX)
+            display_frame = cv2.flip(draw_frame, 1)
+
+            # ── Retrieve prediction and feed GlossSequenceBuffer ──────────────
+            last_label, last_conf, is_busy, last_update_time = predictor.get_result()
+
+            if last_update_time > last_consumed_update_time:
+                if last_label and last_label != "-":
+                    added = gloss_buffer.add_gloss(last_label, confidence=last_conf, timestamp=last_update_time)
+                    if added:
+                        print(f"[Gloss Buffer] Added '{last_label}' (conf={last_conf:.2f}) -> Active: {' -> '.join(gloss_buffer.current_sequence)}")
+                last_consumed_update_time = last_update_time
+
+            if hands_detected:
+                gloss_buffer.record_activity()
+
+            if seg_state == _STATE_IDLE and not is_paused and not is_busy:
+                emitted_seq = gloss_buffer.check_idle_timeout()
+                if emitted_seq:
+                    seq_str = " -> ".join(emitted_seq)
+                    last_translation = translator.translate(emitted_seq)
+                    print(f"\n[Finalized Sequence]")
+                    print(f"Gloss sequence: {seq_str}")
+                    print(f"English output: {last_translation}\n")
 
             gesture_frame_count = len(gesture_feats)
             annotated = draw_hud(
-                frame          = display_frame,
-                state          = seg_state if not is_paused else "PAUSED",
-                label          = last_label,
-                confidence     = last_conf,
-                is_busy        = is_busy,
-                gesture_frames = gesture_frame_count,
-                fps            = fps_estimate
+                frame            = display_frame,
+                state            = seg_state if not is_paused else "PAUSED",
+                label            = last_label,
+                confidence       = last_conf,
+                is_busy          = is_busy,
+                gesture_frames   = gesture_frame_count,
+                fps              = fps_estimate,
+                gloss_sequence   = gloss_buffer.current_sequence,
+                last_translation = last_translation
             )
 
             # Show PAUSED overlay
@@ -490,15 +564,19 @@ def run_live_webcam(
                 print("Session ended by user.")
                 break
             elif key == ord('c'):
-                gesture_feats  = []
-                gesture_pres   = []
-                seg_state      = _STATE_IDLE
-                onset_counter  = 0
-                offset_counter = 0
+                gesture_feats    = []
+                gesture_pres     = []
+                seg_state        = _STATE_IDLE
+                onset_counter    = 0
+                offset_counter   = 0
                 predictor.clear()
+                gloss_buffer.reset()
+                last_translation = ""
                 print("[User] Buffer cleared.")
             elif key == ord(' '):
                 is_paused = not is_paused
+                if not is_paused:
+                    gloss_buffer.record_activity()
                 print(f"[User] {'PAUSED' if is_paused else 'RESUMED'}.")
 
             frame_counter += 1

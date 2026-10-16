@@ -4,5 +4,6 @@ __pycache__/
 .env
 .vscode/
 .idea/
-
-.venv/
+.cache/
+node_modules/
+dist/

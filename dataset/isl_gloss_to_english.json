@@ -1,0 +1,2012 @@
+[
+  {
+    "id": "pair_001",
+    "glosses": [
+      "I_Me",
+      "Want_Desire_Wish_For",
+      "Water"
+    ],
+    "gloss_text": "I_Me Want_Desire_Wish_For Water",
+    "english_text": "I want water.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_002",
+    "glosses": [
+      "I_Me",
+      "Want_Desire_Wish_For",
+      "Food"
+    ],
+    "gloss_text": "I_Me Want_Desire_Wish_For Food",
+    "english_text": "I want food.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_003",
+    "glosses": [
+      "I_Me",
+      "Want_Desire_Wish_For",
+      "Milk"
+    ],
+    "gloss_text": "I_Me Want_Desire_Wish_For Milk",
+    "english_text": "I want milk.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_004",
+    "glosses": [
+      "You",
+      "Want_Desire_Wish_For",
+      "Water"
+    ],
+    "gloss_text": "You Want_Desire_Wish_For Water",
+    "english_text": "Do you want water?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_005",
+    "glosses": [
+      "You",
+      "Want_Desire_Wish_For",
+      "Food"
+    ],
+    "gloss_text": "You Want_Desire_Wish_For Food",
+    "english_text": "Do you want food?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_006",
+    "glosses": [
+      "You",
+      "Want_Desire_Wish_For",
+      "Milk"
+    ],
+    "gloss_text": "You Want_Desire_Wish_For Milk",
+    "english_text": "Do you want milk?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_007",
+    "glosses": [
+      "We",
+      "Want_Desire_Wish_For",
+      "Water"
+    ],
+    "gloss_text": "We Want_Desire_Wish_For Water",
+    "english_text": "We want water.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_008",
+    "glosses": [
+      "We",
+      "Want_Desire_Wish_For",
+      "Food"
+    ],
+    "gloss_text": "We Want_Desire_Wish_For Food",
+    "english_text": "We want food.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_009",
+    "glosses": [
+      "We",
+      "Want_Desire_Wish_For",
+      "Milk"
+    ],
+    "gloss_text": "We Want_Desire_Wish_For Milk",
+    "english_text": "We want milk.",
+    "category": "sov_sentence",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_010",
+    "glosses": [
+      "You",
+      "Help",
+      "I_Me"
+    ],
+    "gloss_text": "You Help I_Me",
+    "english_text": "Please help me.",
+    "category": "polite_request",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_011",
+    "glosses": [
+      "I_Me",
+      "Help",
+      "You"
+    ],
+    "gloss_text": "I_Me Help You",
+    "english_text": "I will help you.",
+    "category": "offer_assistance",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_012",
+    "glosses": [
+      "We",
+      "Help",
+      "You"
+    ],
+    "gloss_text": "We Help You",
+    "english_text": "We will help you.",
+    "category": "offer_assistance",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_013",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "Water"
+    ],
+    "gloss_text": "Give I_Me Water",
+    "english_text": "Give me water.",
+    "category": "imperative",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_014",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "Food"
+    ],
+    "gloss_text": "Give I_Me Food",
+    "english_text": "Give me food.",
+    "category": "imperative",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_015",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "Milk"
+    ],
+    "gloss_text": "Give I_Me Milk",
+    "english_text": "Give me milk.",
+    "category": "imperative",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_016",
+    "glosses": [
+      "I_Me",
+      "Eat",
+      "Food"
+    ],
+    "gloss_text": "I_Me Eat Food",
+    "english_text": "I eat food.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_017",
+    "glosses": [
+      "You",
+      "Eat",
+      "Food"
+    ],
+    "gloss_text": "You Eat Food",
+    "english_text": "You eat food.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_018",
+    "glosses": [
+      "We",
+      "Eat",
+      "Food"
+    ],
+    "gloss_text": "We Eat Food",
+    "english_text": "We eat food.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_019",
+    "glosses": [
+      "I_Me",
+      "Drink",
+      "Water"
+    ],
+    "gloss_text": "I_Me Drink Water",
+    "english_text": "I drink water.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_020",
+    "glosses": [
+      "You",
+      "Drink",
+      "Water"
+    ],
+    "gloss_text": "You Drink Water",
+    "english_text": "You drink water.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_021",
+    "glosses": [
+      "We",
+      "Drink",
+      "Water"
+    ],
+    "gloss_text": "We Drink Water",
+    "english_text": "We drink water.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_022",
+    "glosses": [
+      "I_Me",
+      "Drink",
+      "Milk"
+    ],
+    "gloss_text": "I_Me Drink Milk",
+    "english_text": "I drink milk.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_023",
+    "glosses": [
+      "You",
+      "Drink",
+      "Milk"
+    ],
+    "gloss_text": "You Drink Milk",
+    "english_text": "You drink milk.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_024",
+    "glosses": [
+      "We",
+      "Drink",
+      "Milk"
+    ],
+    "gloss_text": "We Drink Milk",
+    "english_text": "We drink milk.",
+    "category": "action",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_025",
+    "glosses": [
+      "I_Me",
+      "Go",
+      "Where"
+    ],
+    "gloss_text": "I_Me Go Where",
+    "english_text": "Where should I go?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_026",
+    "glosses": [
+      "You",
+      "Go",
+      "Where"
+    ],
+    "gloss_text": "You Go Where",
+    "english_text": "Where are you going?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_027",
+    "glosses": [
+      "Where",
+      "Water"
+    ],
+    "gloss_text": "Where Water",
+    "english_text": "Where is the water?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_028",
+    "glosses": [
+      "Where",
+      "Food"
+    ],
+    "gloss_text": "Where Food",
+    "english_text": "Where is the food?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_029",
+    "glosses": [
+      "Where",
+      "Milk"
+    ],
+    "gloss_text": "Where Milk",
+    "english_text": "Where is the milk?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_030",
+    "glosses": [
+      "What",
+      "Water"
+    ],
+    "gloss_text": "What Water",
+    "english_text": "What is that water?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_031",
+    "glosses": [
+      "What",
+      "Food"
+    ],
+    "gloss_text": "What Food",
+    "english_text": "What is that food?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_032",
+    "glosses": [
+      "What",
+      "Milk"
+    ],
+    "gloss_text": "What Milk",
+    "english_text": "What is that milk?",
+    "category": "question",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_033",
+    "glosses": [
+      "I_Me",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Want_Desire_Wish_For",
+    "english_text": "I want.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_034",
+    "glosses": [
+      "You",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You Want_Desire_Wish_For",
+    "english_text": "You want.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_035",
+    "glosses": [
+      "We",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "We Want_Desire_Wish_For",
+    "english_text": "We want.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_036",
+    "glosses": [
+      "I_Me",
+      "Eat"
+    ],
+    "gloss_text": "I_Me Eat",
+    "english_text": "I eat.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_037",
+    "glosses": [
+      "You",
+      "Eat"
+    ],
+    "gloss_text": "You Eat",
+    "english_text": "You eat.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_038",
+    "glosses": [
+      "We",
+      "Eat"
+    ],
+    "gloss_text": "We Eat",
+    "english_text": "We eat.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_039",
+    "glosses": [
+      "I_Me",
+      "Drink"
+    ],
+    "gloss_text": "I_Me Drink",
+    "english_text": "I drink.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_040",
+    "glosses": [
+      "You",
+      "Drink"
+    ],
+    "gloss_text": "You Drink",
+    "english_text": "You drink.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_041",
+    "glosses": [
+      "We",
+      "Drink"
+    ],
+    "gloss_text": "We Drink",
+    "english_text": "We drink.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_042",
+    "glosses": [
+      "I_Me",
+      "Help"
+    ],
+    "gloss_text": "I_Me Help",
+    "english_text": "I help.",
+    "category": "verb_phrase",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_043",
+    "glosses": [
+      "My",
+      "Food"
+    ],
+    "gloss_text": "My Food",
+    "english_text": "My food.",
+    "category": "possessive",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_044",
+    "glosses": [
+      "My",
+      "Water"
+    ],
+    "gloss_text": "My Water",
+    "english_text": "My water.",
+    "category": "possessive",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_045",
+    "glosses": [
+      "My",
+      "Milk"
+    ],
+    "gloss_text": "My Milk",
+    "english_text": "My milk.",
+    "category": "possessive",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_046",
+    "glosses": [
+      "Drink",
+      "Water"
+    ],
+    "gloss_text": "Drink Water",
+    "english_text": "Drink water.",
+    "category": "verb_object",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_047",
+    "glosses": [
+      "Drink",
+      "Milk"
+    ],
+    "gloss_text": "Drink Milk",
+    "english_text": "Drink milk.",
+    "category": "verb_object",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_048",
+    "glosses": [
+      "Eat",
+      "Food"
+    ],
+    "gloss_text": "Eat Food",
+    "english_text": "Eat food.",
+    "category": "verb_object",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_049",
+    "glosses": [
+      "Help",
+      "I_Me"
+    ],
+    "gloss_text": "Help I_Me",
+    "english_text": "Help me.",
+    "category": "imperative",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_050",
+    "glosses": [
+      "One",
+      "Water"
+    ],
+    "gloss_text": "One Water",
+    "english_text": "One water.",
+    "category": "digit_noun",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_051",
+    "glosses": [
+      "Two",
+      "Food"
+    ],
+    "gloss_text": "Two Food",
+    "english_text": "Two food.",
+    "category": "digit_noun",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_052",
+    "glosses": [
+      "Three",
+      "Milk"
+    ],
+    "gloss_text": "Three Milk",
+    "english_text": "Three milk.",
+    "category": "digit_noun",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_053",
+    "glosses": [
+      "Four",
+      "Water"
+    ],
+    "gloss_text": "Four Water",
+    "english_text": "Four water.",
+    "category": "digit_noun",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_054",
+    "glosses": [
+      "Five",
+      "Food"
+    ],
+    "gloss_text": "Five Food",
+    "english_text": "Five food.",
+    "category": "digit_noun",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_055",
+    "glosses": [
+      "What"
+    ],
+    "gloss_text": "What",
+    "english_text": "What?",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_056",
+    "glosses": [
+      "Where"
+    ],
+    "gloss_text": "Where",
+    "english_text": "Where?",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_057",
+    "glosses": [
+      "Help"
+    ],
+    "gloss_text": "Help",
+    "english_text": "Help!",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_058",
+    "glosses": [
+      "Food"
+    ],
+    "gloss_text": "Food",
+    "english_text": "Food.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_059",
+    "glosses": [
+      "Water"
+    ],
+    "gloss_text": "Water",
+    "english_text": "Water.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_060",
+    "glosses": [
+      "Milk"
+    ],
+    "gloss_text": "Milk",
+    "english_text": "Milk.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_061",
+    "glosses": [
+      "I_Me"
+    ],
+    "gloss_text": "I_Me",
+    "english_text": "Me.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_062",
+    "glosses": [
+      "You"
+    ],
+    "gloss_text": "You",
+    "english_text": "You.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_063",
+    "glosses": [
+      "We"
+    ],
+    "gloss_text": "We",
+    "english_text": "We.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_064",
+    "glosses": [
+      "Eat"
+    ],
+    "gloss_text": "Eat",
+    "english_text": "Eat.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_065",
+    "glosses": [
+      "Drink"
+    ],
+    "gloss_text": "Drink",
+    "english_text": "Drink.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_066",
+    "glosses": [
+      "Give"
+    ],
+    "gloss_text": "Give",
+    "english_text": "Give.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_067",
+    "glosses": [
+      "Go"
+    ],
+    "gloss_text": "Go",
+    "english_text": "Go.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_068",
+    "glosses": [
+      "One"
+    ],
+    "gloss_text": "One",
+    "english_text": "One.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_069",
+    "glosses": [
+      "Two"
+    ],
+    "gloss_text": "Two",
+    "english_text": "Two.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_070",
+    "glosses": [
+      "Three"
+    ],
+    "gloss_text": "Three",
+    "english_text": "Three.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_071",
+    "glosses": [
+      "Four"
+    ],
+    "gloss_text": "Four",
+    "english_text": "Four.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_072",
+    "glosses": [
+      "Five"
+    ],
+    "gloss_text": "Five",
+    "english_text": "Five.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_073",
+    "glosses": [
+      "Six"
+    ],
+    "gloss_text": "Six",
+    "english_text": "Six.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_074",
+    "glosses": [
+      "Seven"
+    ],
+    "gloss_text": "Seven",
+    "english_text": "Seven.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_075",
+    "glosses": [
+      "Eight"
+    ],
+    "gloss_text": "Eight",
+    "english_text": "Eight.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_076",
+    "glosses": [
+      "Nine"
+    ],
+    "gloss_text": "Nine",
+    "english_text": "Nine.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_077",
+    "glosses": [
+      "Ten"
+    ],
+    "gloss_text": "Ten",
+    "english_text": "Ten.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_078",
+    "glosses": [
+      "My"
+    ],
+    "gloss_text": "My",
+    "english_text": "Mine.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_079",
+    "glosses": [
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "Want_Desire_Wish_For",
+    "english_text": "I want.",
+    "category": "single_sign",
+    "synthetic": false,
+    "provenance": "authentic"
+  },
+  {
+    "id": "pair_synth_080",
+    "glosses": [
+      "I_Me",
+      "Water",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Water Want_Desire_Wish_For",
+    "english_text": "I want water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_081",
+    "glosses": [
+      "I_Me",
+      "Food",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Food Want_Desire_Wish_For",
+    "english_text": "I want food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_082",
+    "glosses": [
+      "I_Me",
+      "Milk",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Milk Want_Desire_Wish_For",
+    "english_text": "I want milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_083",
+    "glosses": [
+      "You",
+      "Water",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You Water Want_Desire_Wish_For",
+    "english_text": "Do you want water?",
+    "category": "sov_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_084",
+    "glosses": [
+      "You",
+      "Food",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You Food Want_Desire_Wish_For",
+    "english_text": "Do you want food?",
+    "category": "sov_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_085",
+    "glosses": [
+      "You",
+      "Milk",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You Milk Want_Desire_Wish_For",
+    "english_text": "Do you want milk?",
+    "category": "sov_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_086",
+    "glosses": [
+      "We",
+      "Water",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "We Water Want_Desire_Wish_For",
+    "english_text": "We want water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_087",
+    "glosses": [
+      "We",
+      "Food",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "We Food Want_Desire_Wish_For",
+    "english_text": "We want food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_088",
+    "glosses": [
+      "We",
+      "Milk",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "We Milk Want_Desire_Wish_For",
+    "english_text": "We want milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_089",
+    "glosses": [
+      "I_Me",
+      "Food",
+      "Eat"
+    ],
+    "gloss_text": "I_Me Food Eat",
+    "english_text": "I eat food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_090",
+    "glosses": [
+      "You",
+      "Food",
+      "Eat"
+    ],
+    "gloss_text": "You Food Eat",
+    "english_text": "You eat food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_091",
+    "glosses": [
+      "We",
+      "Food",
+      "Eat"
+    ],
+    "gloss_text": "We Food Eat",
+    "english_text": "We eat food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_092",
+    "glosses": [
+      "I_Me",
+      "Water",
+      "Drink"
+    ],
+    "gloss_text": "I_Me Water Drink",
+    "english_text": "I drink water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_093",
+    "glosses": [
+      "You",
+      "Water",
+      "Drink"
+    ],
+    "gloss_text": "You Water Drink",
+    "english_text": "You drink water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_094",
+    "glosses": [
+      "We",
+      "Water",
+      "Drink"
+    ],
+    "gloss_text": "We Water Drink",
+    "english_text": "We drink water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_095",
+    "glosses": [
+      "I_Me",
+      "Milk",
+      "Drink"
+    ],
+    "gloss_text": "I_Me Milk Drink",
+    "english_text": "I drink milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_096",
+    "glosses": [
+      "You",
+      "Milk",
+      "Drink"
+    ],
+    "gloss_text": "You Milk Drink",
+    "english_text": "You drink milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_097",
+    "glosses": [
+      "We",
+      "Milk",
+      "Drink"
+    ],
+    "gloss_text": "We Milk Drink",
+    "english_text": "We drink milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_098",
+    "glosses": [
+      "You",
+      "Food",
+      "Give"
+    ],
+    "gloss_text": "You Food Give",
+    "english_text": "Please give food.",
+    "category": "sov_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_099",
+    "glosses": [
+      "You",
+      "Water",
+      "Give"
+    ],
+    "gloss_text": "You Water Give",
+    "english_text": "Please give water.",
+    "category": "sov_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_100",
+    "glosses": [
+      "You",
+      "Milk",
+      "Give"
+    ],
+    "gloss_text": "You Milk Give",
+    "english_text": "Please give milk.",
+    "category": "sov_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_101",
+    "glosses": [
+      "I_Me",
+      "Food",
+      "Give"
+    ],
+    "gloss_text": "I_Me Food Give",
+    "english_text": "I will give food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_102",
+    "glosses": [
+      "I_Me",
+      "Water",
+      "Give"
+    ],
+    "gloss_text": "I_Me Water Give",
+    "english_text": "I will give water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_103",
+    "glosses": [
+      "I_Me",
+      "Milk",
+      "Give"
+    ],
+    "gloss_text": "I_Me Milk Give",
+    "english_text": "I will give milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_104",
+    "glosses": [
+      "We",
+      "Food",
+      "Give"
+    ],
+    "gloss_text": "We Food Give",
+    "english_text": "We will give food.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_105",
+    "glosses": [
+      "We",
+      "Water",
+      "Give"
+    ],
+    "gloss_text": "We Water Give",
+    "english_text": "We will give water.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_106",
+    "glosses": [
+      "We",
+      "Milk",
+      "Give"
+    ],
+    "gloss_text": "We Milk Give",
+    "english_text": "We will give milk.",
+    "category": "sov_canonical",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_107",
+    "glosses": [
+      "Water",
+      "Where"
+    ],
+    "gloss_text": "Water Where",
+    "english_text": "Where is the water?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_108",
+    "glosses": [
+      "Food",
+      "Where"
+    ],
+    "gloss_text": "Food Where",
+    "english_text": "Where is the food?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_109",
+    "glosses": [
+      "Milk",
+      "Where"
+    ],
+    "gloss_text": "Milk Where",
+    "english_text": "Where is the milk?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_110",
+    "glosses": [
+      "You",
+      "Where",
+      "Go"
+    ],
+    "gloss_text": "You Where Go",
+    "english_text": "Where are you going?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_111",
+    "glosses": [
+      "I_Me",
+      "Where",
+      "Go"
+    ],
+    "gloss_text": "I_Me Where Go",
+    "english_text": "Where should I go?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_112",
+    "glosses": [
+      "We",
+      "Where",
+      "Go"
+    ],
+    "gloss_text": "We Where Go",
+    "english_text": "Where should we go?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_113",
+    "glosses": [
+      "You",
+      "What",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You What Want_Desire_Wish_For",
+    "english_text": "What do you want?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_114",
+    "glosses": [
+      "You",
+      "What",
+      "Eat"
+    ],
+    "gloss_text": "You What Eat",
+    "english_text": "What do you eat?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_115",
+    "glosses": [
+      "You",
+      "What",
+      "Drink"
+    ],
+    "gloss_text": "You What Drink",
+    "english_text": "What do you drink?",
+    "category": "question_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_116",
+    "glosses": [
+      "Water",
+      "What"
+    ],
+    "gloss_text": "Water What",
+    "english_text": "What is that water?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_117",
+    "glosses": [
+      "Food",
+      "What"
+    ],
+    "gloss_text": "Food What",
+    "english_text": "What is that food?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_118",
+    "glosses": [
+      "Milk",
+      "What"
+    ],
+    "gloss_text": "Milk What",
+    "english_text": "What is that milk?",
+    "category": "question_topic_wh",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_119",
+    "glosses": [
+      "Where",
+      "My",
+      "Food"
+    ],
+    "gloss_text": "Where My Food",
+    "english_text": "Where is my food?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_120",
+    "glosses": [
+      "Where",
+      "My",
+      "Water"
+    ],
+    "gloss_text": "Where My Water",
+    "english_text": "Where is my water?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_121",
+    "glosses": [
+      "Where",
+      "My",
+      "Milk"
+    ],
+    "gloss_text": "Where My Milk",
+    "english_text": "Where is my milk?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_122",
+    "glosses": [
+      "My",
+      "Food",
+      "Where"
+    ],
+    "gloss_text": "My Food Where",
+    "english_text": "Where is my food?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_123",
+    "glosses": [
+      "My",
+      "Water",
+      "Where"
+    ],
+    "gloss_text": "My Water Where",
+    "english_text": "Where is my water?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_124",
+    "glosses": [
+      "My",
+      "Milk",
+      "Where"
+    ],
+    "gloss_text": "My Milk Where",
+    "english_text": "Where is my milk?",
+    "category": "possessive_question",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_125",
+    "glosses": [
+      "I_Me",
+      "My",
+      "Food",
+      "Eat"
+    ],
+    "gloss_text": "I_Me My Food Eat",
+    "english_text": "I eat my food.",
+    "category": "possessive_action",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_126",
+    "glosses": [
+      "I_Me",
+      "My",
+      "Water",
+      "Drink"
+    ],
+    "gloss_text": "I_Me My Water Drink",
+    "english_text": "I drink my water.",
+    "category": "possessive_action",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_127",
+    "glosses": [
+      "I_Me",
+      "My",
+      "Milk",
+      "Drink"
+    ],
+    "gloss_text": "I_Me My Milk Drink",
+    "english_text": "I drink my milk.",
+    "category": "possessive_action",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_128",
+    "glosses": [
+      "One",
+      "Food"
+    ],
+    "gloss_text": "One Food",
+    "english_text": "One food.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_129",
+    "glosses": [
+      "One",
+      "Milk"
+    ],
+    "gloss_text": "One Milk",
+    "english_text": "One milk.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_130",
+    "glosses": [
+      "Two",
+      "Water"
+    ],
+    "gloss_text": "Two Water",
+    "english_text": "Two waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_131",
+    "glosses": [
+      "Two",
+      "Milk"
+    ],
+    "gloss_text": "Two Milk",
+    "english_text": "Two milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_132",
+    "glosses": [
+      "Three",
+      "Water"
+    ],
+    "gloss_text": "Three Water",
+    "english_text": "Three waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_133",
+    "glosses": [
+      "Three",
+      "Food"
+    ],
+    "gloss_text": "Three Food",
+    "english_text": "Three foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_134",
+    "glosses": [
+      "Four",
+      "Food"
+    ],
+    "gloss_text": "Four Food",
+    "english_text": "Four foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_135",
+    "glosses": [
+      "Four",
+      "Milk"
+    ],
+    "gloss_text": "Four Milk",
+    "english_text": "Four milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_136",
+    "glosses": [
+      "Five",
+      "Water"
+    ],
+    "gloss_text": "Five Water",
+    "english_text": "Five waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_137",
+    "glosses": [
+      "Five",
+      "Milk"
+    ],
+    "gloss_text": "Five Milk",
+    "english_text": "Five milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_138",
+    "glosses": [
+      "Six",
+      "Water"
+    ],
+    "gloss_text": "Six Water",
+    "english_text": "Six waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_139",
+    "glosses": [
+      "Six",
+      "Food"
+    ],
+    "gloss_text": "Six Food",
+    "english_text": "Six foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_140",
+    "glosses": [
+      "Six",
+      "Milk"
+    ],
+    "gloss_text": "Six Milk",
+    "english_text": "Six milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_141",
+    "glosses": [
+      "Seven",
+      "Water"
+    ],
+    "gloss_text": "Seven Water",
+    "english_text": "Seven waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_142",
+    "glosses": [
+      "Seven",
+      "Food"
+    ],
+    "gloss_text": "Seven Food",
+    "english_text": "Seven foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_143",
+    "glosses": [
+      "Seven",
+      "Milk"
+    ],
+    "gloss_text": "Seven Milk",
+    "english_text": "Seven milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_144",
+    "glosses": [
+      "Eight",
+      "Water"
+    ],
+    "gloss_text": "Eight Water",
+    "english_text": "Eight waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_145",
+    "glosses": [
+      "Eight",
+      "Food"
+    ],
+    "gloss_text": "Eight Food",
+    "english_text": "Eight foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_146",
+    "glosses": [
+      "Eight",
+      "Milk"
+    ],
+    "gloss_text": "Eight Milk",
+    "english_text": "Eight milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_147",
+    "glosses": [
+      "Nine",
+      "Water"
+    ],
+    "gloss_text": "Nine Water",
+    "english_text": "Nine waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_148",
+    "glosses": [
+      "Nine",
+      "Food"
+    ],
+    "gloss_text": "Nine Food",
+    "english_text": "Nine foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_149",
+    "glosses": [
+      "Nine",
+      "Milk"
+    ],
+    "gloss_text": "Nine Milk",
+    "english_text": "Nine milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_150",
+    "glosses": [
+      "Ten",
+      "Water"
+    ],
+    "gloss_text": "Ten Water",
+    "english_text": "Ten waters.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_151",
+    "glosses": [
+      "Ten",
+      "Food"
+    ],
+    "gloss_text": "Ten Food",
+    "english_text": "Ten foods.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_152",
+    "glosses": [
+      "Ten",
+      "Milk"
+    ],
+    "gloss_text": "Ten Milk",
+    "english_text": "Ten milks.",
+    "category": "digit_noun",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_153",
+    "glosses": [
+      "I_Me",
+      "One",
+      "Water",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me One Water Want_Desire_Wish_For",
+    "english_text": "I want one water.",
+    "category": "numeral_sov",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_154",
+    "glosses": [
+      "I_Me",
+      "Two",
+      "Food",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Two Food Want_Desire_Wish_For",
+    "english_text": "I want two foods.",
+    "category": "numeral_sov",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_155",
+    "glosses": [
+      "I_Me",
+      "Three",
+      "Milk",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "I_Me Three Milk Want_Desire_Wish_For",
+    "english_text": "I want three milks.",
+    "category": "numeral_sov",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_156",
+    "glosses": [
+      "You",
+      "One",
+      "Water",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You One Water Want_Desire_Wish_For",
+    "english_text": "Do you want one water?",
+    "category": "numeral_sov",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_157",
+    "glosses": [
+      "You",
+      "Two",
+      "Food",
+      "Want_Desire_Wish_For"
+    ],
+    "gloss_text": "You Two Food Want_Desire_Wish_For",
+    "english_text": "Do you want two foods?",
+    "category": "numeral_sov",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_158",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "One",
+      "Water"
+    ],
+    "gloss_text": "Give I_Me One Water",
+    "english_text": "Give me one water.",
+    "category": "numeral_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_159",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "Two",
+      "Food"
+    ],
+    "gloss_text": "Give I_Me Two Food",
+    "english_text": "Give me two foods.",
+    "category": "numeral_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_160",
+    "glosses": [
+      "Give",
+      "I_Me",
+      "Three",
+      "Milk"
+    ],
+    "gloss_text": "Give I_Me Three Milk",
+    "english_text": "Give me three milks.",
+    "category": "numeral_imperative",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_161",
+    "glosses": [
+      "I_Me",
+      "One",
+      "Food",
+      "Eat"
+    ],
+    "gloss_text": "I_Me One Food Eat",
+    "english_text": "I eat one food.",
+    "category": "numeral_action",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  },
+  {
+    "id": "pair_synth_162",
+    "glosses": [
+      "I_Me",
+      "Two",
+      "Water",
+      "Drink"
+    ],
+    "gloss_text": "I_Me Two Water Drink",
+    "english_text": "I drink two waters.",
+    "category": "numeral_action",
+    "synthetic": true,
+    "provenance": "synthetic_rule_expansion"
+  }
+]

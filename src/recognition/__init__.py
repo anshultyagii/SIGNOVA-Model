@@ -17,6 +17,11 @@ from .matcher import (
 from .pipeline import (
     ExemplarRecognitionEngine
 )
+from .gloss_buffer import (
+    GlossSequenceBuffer,
+    GlossItem,
+    canonicalize_gloss
+)
 
 __all__ = [
     "NormalizedFrame",
@@ -26,5 +31,8 @@ __all__ = [
     "frame_distance",
     "DTWSequenceMatcher",
     "PredictionResult",
-    "ExemplarRecognitionEngine"
+    "ExemplarRecognitionEngine",
+    "GlossSequenceBuffer",
+    "GlossItem",
+    "canonicalize_gloss"
 ]

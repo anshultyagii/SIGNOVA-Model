@@ -1,0 +1,3218 @@
+{
+  "timestamp": "2026-10-16 11:20:34",
+  "gallery_dir": "F:\\SignSpeakAI\\dataset\\processed_corrected",
+  "dataset_dir": "F:\\SignSpeakAI\\dataset\\recorded_processed",
+  "total_files_found": 84,
+  "evaluated_count": 84,
+  "skipped_count": 0,
+  "top1_correct_count": 3,
+  "top1_accuracy": 0.03571428571428571,
+  "top3_correct_count": 15,
+  "top3_accuracy": 0.17857142857142858,
+  "samples_with_hands": 12,
+  "samples_zero_hands": 72,
+  "accuracy_with_hands_top1": 0.16666666666666666,
+  "accuracy_with_hands_top3": 0.25,
+  "classes": [
+    "Drink",
+    "Eat",
+    "Eight",
+    "Five",
+    "Food",
+    "Four",
+    "Give",
+    "Go",
+    "Help",
+    "I_Me",
+    "Milk",
+    "My",
+    "Nine",
+    "One",
+    "Seven",
+    "Six",
+    "Ten",
+    "Three",
+    "Two",
+    "Want_Desire_Wish_For",
+    "Water",
+    "We",
+    "What",
+    "Where",
+    "You"
+  ],
+  "per_class_metrics": {
+    "Drink": {
+      "total": 10,
+      "top1_correct": 1,
+      "top1_accuracy": 0.1,
+      "top3_correct": 9,
+      "top3_accuracy": 0.9,
+      "mean_top1_similarity": 0.58212,
+      "mean_top1_distance": 0.7247999999999999
+    },
+    "Eat": {
+      "total": 10,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.54174,
+      "mean_top1_distance": 0.87622
+    },
+    "Eight": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5928,
+      "mean_top1_distance": 0.687
+    },
+    "Five": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5854,
+      "mean_top1_distance": 0.7082
+    },
+    "Food": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5977,
+      "mean_top1_distance": 0.6731
+    },
+    "Four": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5926,
+      "mean_top1_distance": 0.6874
+    },
+    "Give": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 1,
+      "top3_accuracy": 1.0,
+      "mean_top1_similarity": 0.5865,
+      "mean_top1_distance": 0.7049
+    },
+    "Go": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.6648,
+      "mean_top1_distance": 0.5042
+    },
+    "Help": {
+      "total": 10,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5706899999999998,
+      "mean_top1_distance": 0.79606
+    },
+    "I_Me": {
+      "total": 10,
+      "top1_correct": 1,
+      "top1_accuracy": 0.1,
+      "top3_correct": 2,
+      "top3_accuracy": 0.2,
+      "mean_top1_similarity": 0.56545,
+      "mean_top1_distance": 0.7735099999999999
+    },
+    "Milk": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.7238,
+      "mean_top1_distance": 0.3817
+    },
+    "My": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5855,
+      "mean_top1_distance": 0.7079
+    },
+    "Nine": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5908,
+      "mean_top1_distance": 0.6925
+    },
+    "One": {
+      "total": 10,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 2,
+      "top3_accuracy": 0.2,
+      "mean_top1_similarity": 0.57745,
+      "mean_top1_distance": 0.73185
+    },
+    "Seven": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5889,
+      "mean_top1_distance": 0.698
+    },
+    "Six": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.6925,
+      "mean_top1_distance": 0.4439
+    },
+    "Ten": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5901,
+      "mean_top1_distance": 0.6947
+    },
+    "Three": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5969,
+      "mean_top1_distance": 0.6753
+    },
+    "Two": {
+      "total": 6,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5625833333333334,
+      "mean_top1_distance": 0.7847666666666666
+    },
+    "Want_Desire_Wish_For": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5868,
+      "mean_top1_distance": 0.7043
+    },
+    "Water": {
+      "total": 10,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5699299999999999,
+      "mean_top1_distance": 0.7547599999999999
+    },
+    "We": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5858,
+      "mean_top1_distance": 0.7071
+    },
+    "What": {
+      "total": 1,
+      "top1_correct": 1,
+      "top1_accuracy": 1.0,
+      "top3_correct": 1,
+      "top3_accuracy": 1.0,
+      "mean_top1_similarity": 0.5845,
+      "mean_top1_distance": 0.711
+    },
+    "Where": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.7439,
+      "mean_top1_distance": 0.3443
+    },
+    "You": {
+      "total": 1,
+      "top1_correct": 0,
+      "top1_accuracy": 0.0,
+      "top3_correct": 0,
+      "top3_accuracy": 0.0,
+      "mean_top1_similarity": 0.5851,
+      "mean_top1_distance": 0.709
+    }
+  },
+  "confusion_matrix": [
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      9,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0
+    ],
+    [
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      10,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      5,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ]
+  ],
+  "misclassifications": [
+    {
+      "file_name": "Drink_sample_002_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5736,
+      "top1_distance": 0.7432,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5736,
+          "distance": 0.7432
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5719,
+          "distance": 0.7484
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5671,
+          "distance": 0.7635
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_003_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5677,
+      "top1_distance": 0.7614,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5677,
+          "distance": 0.7614
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5671,
+          "distance": 0.7633
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5667,
+          "distance": 0.7645
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_004_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5608,
+      "top1_distance": 0.7833,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5608,
+          "distance": 0.7833
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5577,
+          "distance": 0.7931
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5562,
+          "distance": 0.7979
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_005_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5695,
+      "top1_distance": 0.7559,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5695,
+          "distance": 0.7559
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.565,
+          "distance": 0.7701
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5646,
+          "distance": 0.7712
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_006_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5647,
+      "top1_distance": 0.7708,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5647,
+          "distance": 0.7708
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5644,
+          "distance": 0.7719
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.563,
+          "distance": 0.7761
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_007_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5745,
+      "top1_distance": 0.7406,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5745,
+          "distance": 0.7406
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5727,
+          "distance": 0.746
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5659,
+          "distance": 0.7669
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_008_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5756,
+      "top1_distance": 0.7374,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5756,
+          "distance": 0.7374
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5728,
+          "distance": 0.7457
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5658,
+          "distance": 0.7675
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_009_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.569,
+      "top1_distance": 0.7575,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.569,
+          "distance": 0.7575
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5645,
+          "distance": 0.7716
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5629,
+          "distance": 0.7766
+        }
+      ]
+    },
+    {
+      "file_name": "Drink_sample_010_landmarks.npz",
+      "ground_truth": "Drink",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.564,
+      "top1_distance": 0.773,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.564,
+          "distance": 0.773
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5631,
+          "distance": 0.7759
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.56,
+          "distance": 0.7856
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_001_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5916,
+      "top1_distance": 0.6903,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5916,
+          "distance": 0.6903
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5913,
+          "distance": 0.6913
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5836,
+          "distance": 0.7134
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_002_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5624,
+      "top1_distance": 0.7782,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5624,
+          "distance": 0.7782
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5599,
+          "distance": 0.7861
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5595,
+          "distance": 0.7874
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_003_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5579,
+      "top1_distance": 0.7925,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5579,
+          "distance": 0.7925
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5579,
+          "distance": 0.7925
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5541,
+          "distance": 0.8048
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_004_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "What",
+      "top1_similarity": 0.567,
+      "top1_distance": 0.7638,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.567,
+          "distance": 0.7638
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5656,
+          "distance": 0.7681
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5585,
+          "distance": 0.7906
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_005_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5569,
+      "top1_distance": 0.7955,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5569,
+          "distance": 0.7955
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5548,
+          "distance": 0.8026
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5524,
+          "distance": 0.8102
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_006_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5571,
+      "top1_distance": 0.7951,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5571,
+          "distance": 0.7951
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5566,
+          "distance": 0.7965
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5534,
+          "distance": 0.807
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_007_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.3689,
+      "top1_distance": 1.7106,
+      "ground_truth_rank": 6,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.3689,
+          "distance": 1.7106
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.3501,
+          "distance": 1.8561
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.3462,
+          "distance": 1.8881
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_008_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5492,
+      "top1_distance": 0.8208,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5492,
+          "distance": 0.8208
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5477,
+          "distance": 0.826
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5443,
+          "distance": 0.8373
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_009_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5531,
+      "top1_distance": 0.8081,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5531,
+          "distance": 0.8081
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.552,
+          "distance": 0.8116
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5509,
+          "distance": 0.8151
+        }
+      ]
+    },
+    {
+      "file_name": "Eat_sample_010_landmarks.npz",
+      "ground_truth": "Eat",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5533,
+      "top1_distance": 0.8073,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5533,
+          "distance": 0.8073
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5529,
+          "distance": 0.8087
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5521,
+          "distance": 0.8112
+        }
+      ]
+    },
+    {
+      "file_name": "Eight_sample_001_landmarks.npz",
+      "ground_truth": "Eight",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5928,
+      "top1_distance": 0.687,
+      "ground_truth_rank": 18,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5928,
+          "distance": 0.687
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5917,
+          "distance": 0.6902
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5849,
+          "distance": 0.7097
+        }
+      ]
+    },
+    {
+      "file_name": "Five_sample_001_landmarks.npz",
+      "ground_truth": "Five",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5854,
+      "top1_distance": 0.7082,
+      "ground_truth_rank": 17,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5854,
+          "distance": 0.7082
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5844,
+          "distance": 0.711
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5764,
+          "distance": 0.7349
+        }
+      ]
+    },
+    {
+      "file_name": "Food_sample_001_landmarks.npz",
+      "ground_truth": "Food",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5977,
+      "top1_distance": 0.6731,
+      "ground_truth_rank": 15,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5977,
+          "distance": 0.6731
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5955,
+          "distance": 0.6791
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5893,
+          "distance": 0.697
+        }
+      ]
+    },
+    {
+      "file_name": "Four_sample_001_landmarks.npz",
+      "ground_truth": "Four",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5926,
+      "top1_distance": 0.6874,
+      "ground_truth_rank": 20,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5926,
+          "distance": 0.6874
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.591,
+          "distance": 0.6921
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5828,
+          "distance": 0.7158
+        }
+      ]
+    },
+    {
+      "file_name": "Give_sample_001_landmarks.npz",
+      "ground_truth": "Give",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5865,
+      "top1_distance": 0.7049,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5865,
+          "distance": 0.7049
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5845,
+          "distance": 0.7108
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5762,
+          "distance": 0.7354
+        }
+      ]
+    },
+    {
+      "file_name": "Go_sample_001_landmarks.npz",
+      "ground_truth": "Go",
+      "top1_prediction": "One",
+      "top1_similarity": 0.6648,
+      "top1_distance": 0.5042,
+      "ground_truth_rank": 16,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "1_One",
+          "similarity": 0.6648,
+          "distance": 0.5042
+        },
+        {
+          "rank": 2,
+          "label": "3_Three",
+          "similarity": 0.6509,
+          "distance": 0.5364
+        },
+        {
+          "rank": 3,
+          "label": "2_Two",
+          "similarity": 0.6482,
+          "distance": 0.5427
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_001_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Six",
+      "top1_similarity": 0.6989,
+      "top1_distance": 0.4309,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "6_Six",
+          "similarity": 0.6989,
+          "distance": 0.4309
+        },
+        {
+          "rank": 2,
+          "label": "Water",
+          "similarity": 0.6826,
+          "distance": 0.4649
+        },
+        {
+          "rank": 3,
+          "label": "7_Seven",
+          "similarity": 0.6771,
+          "distance": 0.4769
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_002_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5698,
+      "top1_distance": 0.7549,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5698,
+          "distance": 0.7549
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5686,
+          "distance": 0.7588
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5639,
+          "distance": 0.7732
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_003_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5677,
+      "top1_distance": 0.7616,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5677,
+          "distance": 0.7616
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5674,
+          "distance": 0.7625
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5587,
+          "distance": 0.7898
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_004_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "My",
+      "top1_similarity": 0.6786,
+      "top1_distance": 0.4735,
+      "ground_truth_rank": 21,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "My",
+          "similarity": 0.6786,
+          "distance": 0.4735
+        },
+        {
+          "rank": 2,
+          "label": "Food",
+          "similarity": 0.6743,
+          "distance": 0.483
+        },
+        {
+          "rank": 3,
+          "label": "7_Seven",
+          "similarity": 0.6702,
+          "distance": 0.492
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_005_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5647,
+      "top1_distance": 0.7707,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5647,
+          "distance": 0.7707
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5609,
+          "distance": 0.7828
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5599,
+          "distance": 0.786
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_006_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5619,
+      "top1_distance": 0.7796,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5619,
+          "distance": 0.7796
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5603,
+          "distance": 0.7848
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5568,
+          "distance": 0.7959
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_007_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5629,
+      "top1_distance": 0.7766,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5629,
+          "distance": 0.7766
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5618,
+          "distance": 0.7801
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5603,
+          "distance": 0.7847
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_008_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.565,
+      "top1_distance": 0.77,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.565,
+          "distance": 0.77
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5632,
+          "distance": 0.7755
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5613,
+          "distance": 0.7817
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_009_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.3755,
+      "top1_distance": 1.6632,
+      "ground_truth_rank": 24,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.3755,
+          "distance": 1.6632
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.3558,
+          "distance": 1.8103
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.3524,
+          "distance": 1.8379
+        }
+      ]
+    },
+    {
+      "file_name": "Help_sample_010_landmarks.npz",
+      "ground_truth": "Help",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5619,
+      "top1_distance": 0.7796,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5619,
+          "distance": 0.7796
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5601,
+          "distance": 0.7855
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5588,
+          "distance": 0.7895
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_001_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5968,
+      "top1_distance": 0.6755,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5968,
+          "distance": 0.6755
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.595,
+          "distance": 0.6807
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5871,
+          "distance": 0.7033
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_002_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5691,
+      "top1_distance": 0.7571,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5691,
+          "distance": 0.7571
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5664,
+          "distance": 0.7656
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5615,
+          "distance": 0.7809
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_003_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5692,
+      "top1_distance": 0.7568,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5692,
+          "distance": 0.7568
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5676,
+          "distance": 0.7617
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5626,
+          "distance": 0.7774
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_004_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.573,
+      "top1_distance": 0.7452,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.573,
+          "distance": 0.7452
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5706,
+          "distance": 0.7526
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5648,
+          "distance": 0.7707
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_006_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5634,
+      "top1_distance": 0.7749,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5634,
+          "distance": 0.7749
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5607,
+          "distance": 0.7835
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5561,
+          "distance": 0.7982
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_007_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5653,
+      "top1_distance": 0.7689,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5653,
+          "distance": 0.7689
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5624,
+          "distance": 0.7782
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5566,
+          "distance": 0.7968
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_008_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5647,
+      "top1_distance": 0.7708,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5647,
+          "distance": 0.7708
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5615,
+          "distance": 0.781
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5581,
+          "distance": 0.7917
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_009_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "One",
+      "top1_similarity": 0.4883,
+      "top1_distance": 1.0479,
+      "ground_truth_rank": 2,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "1_One",
+          "similarity": 0.4883,
+          "distance": 1.0479
+        },
+        {
+          "rank": 2,
+          "label": "I_Me",
+          "similarity": 0.4858,
+          "distance": 1.0584
+        },
+        {
+          "rank": 3,
+          "label": "You",
+          "similarity": 0.4758,
+          "distance": 1.1016
+        }
+      ]
+    },
+    {
+      "file_name": "I_Me_sample_010_landmarks.npz",
+      "ground_truth": "I_Me",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5635,
+      "top1_distance": 0.7746,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5635,
+          "distance": 0.7746
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5616,
+          "distance": 0.7807
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5562,
+          "distance": 0.798
+        }
+      ]
+    },
+    {
+      "file_name": "Milk_sample_001_landmarks.npz",
+      "ground_truth": "Milk",
+      "top1_prediction": "Food",
+      "top1_similarity": 0.7238,
+      "top1_distance": 0.3817,
+      "ground_truth_rank": 25,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Food",
+          "similarity": 0.7238,
+          "distance": 0.3817
+        },
+        {
+          "rank": 2,
+          "label": "2_Two",
+          "similarity": 0.6899,
+          "distance": 0.4496
+        },
+        {
+          "rank": 3,
+          "label": "3_Three",
+          "similarity": 0.6874,
+          "distance": 0.4548
+        }
+      ]
+    },
+    {
+      "file_name": "My_sample_001_landmarks.npz",
+      "ground_truth": "My",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5855,
+      "top1_distance": 0.7079,
+      "ground_truth_rank": 8,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5855,
+          "distance": 0.7079
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5842,
+          "distance": 0.7118
+        },
+        {
+          "rank": 3,
+          "label": "Drink",
+          "similarity": 0.5781,
+          "distance": 0.7298
+        }
+      ]
+    },
+    {
+      "file_name": "Nine_sample_001_landmarks.npz",
+      "ground_truth": "Nine",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5908,
+      "top1_distance": 0.6925,
+      "ground_truth_rank": 19,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5908,
+          "distance": 0.6925
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5878,
+          "distance": 0.7013
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5822,
+          "distance": 0.7176
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_001_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5882,
+      "top1_distance": 0.7001,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5882,
+          "distance": 0.7001
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5868,
+          "distance": 0.7043
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5779,
+          "distance": 0.7303
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_002_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5771,
+      "top1_distance": 0.7329,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5771,
+          "distance": 0.7329
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5768,
+          "distance": 0.7338
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5695,
+          "distance": 0.7559
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_003_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.576,
+      "top1_distance": 0.7361,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.576,
+          "distance": 0.7361
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5755,
+          "distance": 0.7377
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5673,
+          "distance": 0.7626
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_004_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5779,
+      "top1_distance": 0.7305,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5779,
+          "distance": 0.7305
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5766,
+          "distance": 0.7342
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5698,
+          "distance": 0.7551
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_005_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5768,
+      "top1_distance": 0.7336,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5768,
+          "distance": 0.7336
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5754,
+          "distance": 0.7379
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5679,
+          "distance": 0.7608
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_006_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5768,
+      "top1_distance": 0.7337,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5768,
+          "distance": 0.7337
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5756,
+          "distance": 0.7372
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5672,
+          "distance": 0.7631
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_007_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5705,
+      "top1_distance": 0.7529,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5705,
+          "distance": 0.7529
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5704,
+          "distance": 0.7532
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5614,
+          "distance": 0.7813
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_008_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5788,
+      "top1_distance": 0.7278,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5788,
+          "distance": 0.7278
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5774,
+          "distance": 0.7319
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.569,
+          "distance": 0.7575
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_009_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5788,
+      "top1_distance": 0.7277,
+      "ground_truth_rank": 4,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5788,
+          "distance": 0.7277
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5771,
+          "distance": 0.7327
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5699,
+          "distance": 0.7547
+        }
+      ]
+    },
+    {
+      "file_name": "One_sample_010_landmarks.npz",
+      "ground_truth": "One",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5736,
+      "top1_distance": 0.7432,
+      "ground_truth_rank": 3,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5736,
+          "distance": 0.7432
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5726,
+          "distance": 0.7463
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5636,
+          "distance": 0.7743
+        }
+      ]
+    },
+    {
+      "file_name": "Seven_sample_001_landmarks.npz",
+      "ground_truth": "Seven",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5889,
+      "top1_distance": 0.698,
+      "ground_truth_rank": 15,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5889,
+          "distance": 0.698
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5877,
+          "distance": 0.7016
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5774,
+          "distance": 0.732
+        }
+      ]
+    },
+    {
+      "file_name": "Six_sample_001_landmarks.npz",
+      "ground_truth": "Six",
+      "top1_prediction": "Food",
+      "top1_similarity": 0.6925,
+      "top1_distance": 0.4439,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Food",
+          "similarity": 0.6925,
+          "distance": 0.4439
+        },
+        {
+          "rank": 2,
+          "label": "4_Four",
+          "similarity": 0.6648,
+          "distance": 0.5041
+        },
+        {
+          "rank": 3,
+          "label": "3_Three",
+          "similarity": 0.6595,
+          "distance": 0.5162
+        }
+      ]
+    },
+    {
+      "file_name": "Ten_sample_001_landmarks.npz",
+      "ground_truth": "Ten",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5901,
+      "top1_distance": 0.6947,
+      "ground_truth_rank": 16,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5901,
+          "distance": 0.6947
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5875,
+          "distance": 0.7022
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5812,
+          "distance": 0.7206
+        }
+      ]
+    },
+    {
+      "file_name": "Three_sample_001_landmarks.npz",
+      "ground_truth": "Three",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5969,
+      "top1_distance": 0.6753,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5969,
+          "distance": 0.6753
+        },
+        {
+          "rank": 2,
+          "label": "What",
+          "similarity": 0.5965,
+          "distance": 0.6764
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5853,
+          "distance": 0.7084
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_001_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "We",
+      "top1_similarity": 0.4873,
+      "top1_distance": 1.0522,
+      "ground_truth_rank": 17,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "We",
+          "similarity": 0.4873,
+          "distance": 1.0522
+        },
+        {
+          "rank": 2,
+          "label": "Want_Desire_Wish_For",
+          "similarity": 0.4032,
+          "distance": 1.4801
+        },
+        {
+          "rank": 3,
+          "label": "Milk",
+          "similarity": 0.4019,
+          "distance": 1.488
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_002_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5783,
+      "top1_distance": 0.7292,
+      "ground_truth_rank": 7,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5783,
+          "distance": 0.7292
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5774,
+          "distance": 0.7318
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5684,
+          "distance": 0.7592
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_003_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5753,
+      "top1_distance": 0.7384,
+      "ground_truth_rank": 7,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5753,
+          "distance": 0.7384
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5734,
+          "distance": 0.7439
+        },
+        {
+          "rank": 3,
+          "label": "I_Me",
+          "similarity": 0.5662,
+          "distance": 0.766
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_004_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5806,
+      "top1_distance": 0.7224,
+      "ground_truth_rank": 6,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5806,
+          "distance": 0.7224
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5795,
+          "distance": 0.7257
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.571,
+          "distance": 0.7512
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_005_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5782,
+      "top1_distance": 0.7296,
+      "ground_truth_rank": 7,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5782,
+          "distance": 0.7296
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5768,
+          "distance": 0.7337
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5684,
+          "distance": 0.7592
+        }
+      ]
+    },
+    {
+      "file_name": "Two_sample_006_landmarks.npz",
+      "ground_truth": "Two",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5758,
+      "top1_distance": 0.7368,
+      "ground_truth_rank": 8,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5758,
+          "distance": 0.7368
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5743,
+          "distance": 0.7411
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5655,
+          "distance": 0.7684
+        }
+      ]
+    },
+    {
+      "file_name": "Want_Desire_Wish_For_sample_001_landmarks.npz",
+      "ground_truth": "Want_Desire_Wish_For",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5868,
+      "top1_distance": 0.7043,
+      "ground_truth_rank": 21,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5868,
+          "distance": 0.7043
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5824,
+          "distance": 0.7169
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5746,
+          "distance": 0.7402
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_001_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5848,
+      "top1_distance": 0.7099,
+      "ground_truth_rank": 11,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5848,
+          "distance": 0.7099
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5814,
+          "distance": 0.7199
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5743,
+          "distance": 0.7412
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_002_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5661,
+      "top1_distance": 0.7666,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5661,
+          "distance": 0.7666
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5617,
+          "distance": 0.7802
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5599,
+          "distance": 0.7861
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_003_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5654,
+      "top1_distance": 0.7687,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5654,
+          "distance": 0.7687
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5636,
+          "distance": 0.7742
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5568,
+          "distance": 0.7961
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_004_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5697,
+      "top1_distance": 0.7552,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5697,
+          "distance": 0.7552
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5672,
+          "distance": 0.7631
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5644,
+          "distance": 0.7719
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_005_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5663,
+      "top1_distance": 0.7659,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5663,
+          "distance": 0.7659
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5647,
+          "distance": 0.7709
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.56,
+          "distance": 0.7858
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_006_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5703,
+      "top1_distance": 0.7536,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5703,
+          "distance": 0.7536
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5693,
+          "distance": 0.7566
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5645,
+          "distance": 0.7716
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_007_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.5669,
+      "top1_distance": 0.7639,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.5669,
+          "distance": 0.7639
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5667,
+          "distance": 0.7648
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5611,
+          "distance": 0.7823
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_008_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5709,
+      "top1_distance": 0.7517,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5709,
+          "distance": 0.7517
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.569,
+          "distance": 0.7575
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5658,
+          "distance": 0.7674
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_009_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Give",
+      "top1_similarity": 0.571,
+      "top1_distance": 0.7513,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Give",
+          "similarity": 0.571,
+          "distance": 0.7513
+        },
+        {
+          "rank": 2,
+          "label": "Drink",
+          "similarity": 0.5706,
+          "distance": 0.7524
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5685,
+          "distance": 0.759
+        }
+      ]
+    },
+    {
+      "file_name": "Water_sample_010_landmarks.npz",
+      "ground_truth": "Water",
+      "top1_prediction": "Drink",
+      "top1_similarity": 0.5679,
+      "top1_distance": 0.7608,
+      "ground_truth_rank": 10,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Drink",
+          "similarity": 0.5679,
+          "distance": 0.7608
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5664,
+          "distance": 0.7656
+        },
+        {
+          "rank": 3,
+          "label": "What",
+          "similarity": 0.5608,
+          "distance": 0.783
+        }
+      ]
+    },
+    {
+      "file_name": "We_sample_001_landmarks.npz",
+      "ground_truth": "We",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5858,
+      "top1_distance": 0.7071,
+      "ground_truth_rank": 21,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5858,
+          "distance": 0.7071
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5822,
+          "distance": 0.7177
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5751,
+          "distance": 0.739
+        }
+      ]
+    },
+    {
+      "file_name": "Where_sample_001_landmarks.npz",
+      "ground_truth": "Where",
+      "top1_prediction": "Food",
+      "top1_similarity": 0.7439,
+      "top1_distance": 0.3443,
+      "ground_truth_rank": 23,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "Food",
+          "similarity": 0.7439,
+          "distance": 0.3443
+        },
+        {
+          "rank": 2,
+          "label": "3_Three",
+          "similarity": 0.686,
+          "distance": 0.4578
+        },
+        {
+          "rank": 3,
+          "label": "2_Two",
+          "similarity": 0.6831,
+          "distance": 0.4639
+        }
+      ]
+    },
+    {
+      "file_name": "You_sample_001_landmarks.npz",
+      "ground_truth": "You",
+      "top1_prediction": "What",
+      "top1_similarity": 0.5851,
+      "top1_distance": 0.709,
+      "ground_truth_rank": 9,
+      "top3_candidates": [
+        {
+          "rank": 1,
+          "label": "What",
+          "similarity": 0.5851,
+          "distance": 0.709
+        },
+        {
+          "rank": 2,
+          "label": "Give",
+          "similarity": 0.5813,
+          "distance": 0.7203
+        },
+        {
+          "rank": 3,
+          "label": "1_One",
+          "similarity": 0.5734,
+          "distance": 0.7439
+        }
+      ]
+    }
+  ],
+  "skipped_samples": []
+}

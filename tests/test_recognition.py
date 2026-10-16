@@ -18,7 +18,12 @@ from src.recognition.features import (
 )
 from src.recognition.matcher import (
     DTWSequenceMatcher,
-    PredictionResult
+    PredictionResult,
+    _pack_sequence,
+    _resample_matrix,
+    _RH_FLAG_IDX,
+    _LH_FLAG_IDX,
+    MAX_DTW_LEN
 )
 
 
@@ -131,15 +136,22 @@ class TestFeatureProcessing(unittest.TestCase):
 class TestDTWMatcher(unittest.TestCase):
     """Tests DTW distance computation and prediction output."""
 
-    def _create_synthetic_sequence(self, length: int, label: str, offset: float = 0.0) -> NormalizedSequence:
+    def _create_synthetic_sequence(
+        self,
+        length: int,
+        label: str,
+        offset: float = 0.0,
+        rh_present_pattern: list = None
+    ) -> NormalizedSequence:
         frames = []
         for i in range(length):
             t = (i + offset) / max(length, 1)
             # Create a synthetic pose
             pose = np.zeros((7, 3), dtype=np.float32) + t
+            is_rh = rh_present_pattern[i] if rh_present_pattern is not None else True
             # Synthetic right hand shape
-            rh_shape = np.ones((21, 3), dtype=np.float32) * t
-            rh_pos = np.array([t, 0.5, 0.0], dtype=np.float32)
+            rh_shape = np.ones((21, 3), dtype=np.float32) * t if is_rh else None
+            rh_pos = np.array([t, 0.5, 0.0], dtype=np.float32) if is_rh else None
             frames.append(
                 NormalizedFrame(
                     pose=pose,
@@ -148,7 +160,7 @@ class TestDTWMatcher(unittest.TestCase):
                     lh_present=False,
                     rh_shape=rh_shape,
                     rh_pos=rh_pos,
-                    rh_present=True
+                    rh_present=is_rh
                 )
             )
         return NormalizedSequence(
@@ -209,6 +221,36 @@ class TestDTWMatcher(unittest.TestCase):
         self.assertIn("label", d)
         self.assertIn("similarity", d)
         self.assertIn("distance", d)
+
+    def test_resampling_long_sequence_identity_is_zero(self):
+        """A sequence longer than MAX_DTW_LEN (60) with hand transitions compared with itself must have exact distance 0.0."""
+        # 80 frames: 10 frames no hand, 50 frames hand present, 20 frames no hand
+        pattern = [False] * 10 + [True] * 50 + [False] * 20
+        seq_long = self._create_synthetic_sequence(80, "LongSign", rh_present_pattern=pattern)
+        matcher = DTWSequenceMatcher()
+        dist = matcher.compute_dtw_distance(seq_long, seq_long)
+        self.assertAlmostEqual(dist, 0.0, places=5)
+
+    def test_resampled_presence_flags_remain_binary(self):
+        """Resampling sequences longer than MAX_DTW_LEN must keep hand flags strictly binary (0.0 or 1.0)."""
+        pattern = [False] * 15 + [True] * 45 + [False] * 15
+        seq_long = self._create_synthetic_sequence(75, "LongSign", rh_present_pattern=pattern)
+        packed = _pack_sequence(seq_long)
+        resampled = _resample_matrix(packed, MAX_DTW_LEN)
+
+        unique_rh = set(np.unique(resampled[:, _RH_FLAG_IDX]))
+        unique_lh = set(np.unique(resampled[:, _LH_FLAG_IDX]))
+        self.assertTrue(unique_rh.issubset({0.0, 1.0}))
+        self.assertTrue(unique_lh.issubset({0.0, 1.0}))
+
+    def test_genuine_missing_hand_mismatch_penalized(self):
+        """Genuine hand presence mismatches must still incur the intended missing hand penalty."""
+        seq_with_hand = self._create_synthetic_sequence(20, "WithHand", rh_present_pattern=[True] * 20)
+        seq_no_hand = self._create_synthetic_sequence(20, "NoHand", rh_present_pattern=[False] * 20)
+        matcher = DTWSequenceMatcher()
+        dist = matcher.compute_dtw_distance(seq_with_hand, seq_no_hand)
+        # Missing hand penalty is 2.0 per frame on right hand
+        self.assertGreaterEqual(dist, 1.0)
 
 
 if __name__ == "__main__":

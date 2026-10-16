@@ -22,7 +22,15 @@ from .features import (
 # NormalizedSequence into a single float32 matrix (T, D) and run DTW using
 # NumPy batch distance calculations.
 
-DTW_RESAMPLE_LEN = 30   # Fixed T for all DTW comparisons (bounds O to 30*30=900 per template)
+# Maximum number of frames to run DTW on per sequence.
+# If the trimmed sequence is longer, it is linearly resampled to this cap.
+# Using natural sequence lengths (not forcing both to the same length) allows
+# DTW to exploit genuine temporal-length differences between signs (e.g. Drink
+# is naturally ~27 frames while Water is ~42 frames after active-window trim).
+MAX_DTW_LEN = 60   # cap — keeps cost O(60*60)=3600 per template pair
+
+# Keep DTW_RESAMPLE_LEN as an alias so any external imports don't break.
+DTW_RESAMPLE_LEN = MAX_DTW_LEN
 
 
 def _pack_sequence(seq: NormalizedSequence) -> np.ndarray:
@@ -61,7 +69,12 @@ def _resample_matrix(mat: np.ndarray, target_len: int) -> np.ndarray:
     lo = np.floor(indices).astype(int)
     hi = np.clip(lo + 1, 0, T - 1)
     alpha = (indices - lo)[:, None]   # (target_len, 1)
-    return (1.0 - alpha) * mat[lo] + alpha * mat[hi]
+    res = (1.0 - alpha) * mat[lo] + alpha * mat[hi]
+    # Hand presence flags must remain strictly binary (0.0 or 1.0)
+    res[:, [_RH_FLAG_IDX, _LH_FLAG_IDX]] = np.where(
+        res[:, [_RH_FLAG_IDX, _LH_FLAG_IDX]] >= 0.5, 1.0, 0.0
+    )
+    return res
 
 
 # Weights matching frame_distance() defaults, applied to packed vector slices
@@ -94,12 +107,11 @@ def _batch_frame_distances(A: np.ndarray, B: np.ndarray) -> np.ndarray:
         A[:, None, _POSE_SLICE] - B[None, :, _POSE_SLICE], axis=2
     ) / np.sqrt(7)   # (Ta, Tb)
 
-    # Right-hand distances
-    rh_a = A[:, _RH_FLAG_IDX]       # (Ta,)
-    rh_b = B[:, _RH_FLAG_IDX]       # (Tb,)
-    both_rh   = np.outer(rh_a, rh_b)              # (Ta, Tb) 1 where both present
-    either_rh = (rh_a[:, None] + rh_b[None, :]) > 0.5
-    only_one_rh = either_rh & (both_rh < 0.5)
+    # Right-hand distances (using boolean logic so identical frames cannot trigger penalty)
+    rh_a = A[:, _RH_FLAG_IDX] > 0.5            # (Ta,) bool
+    rh_b = B[:, _RH_FLAG_IDX] > 0.5            # (Tb,) bool
+    both_rh = rh_a[:, None] & rh_b[None, :]     # (Ta, Tb) bool
+    only_one_rh = rh_a[:, None] ^ rh_b[None, :] # (Ta, Tb) bool (XOR)
 
     rh_shape_dist = np.linalg.norm(
         A[:, None, _RH_SHAPE_SLICE] - B[None, :, _RH_SHAPE_SLICE], axis=2
@@ -108,17 +120,16 @@ def _batch_frame_distances(A: np.ndarray, B: np.ndarray) -> np.ndarray:
         A[:, None, _RH_POS_SLICE] - B[None, :, _RH_POS_SLICE], axis=2
     )
     d_rh = np.where(
-        both_rh > 0.5,
+        both_rh,
         _W_SHAPE * rh_shape_dist + _W_POS * rh_pos_dist,
         np.where(only_one_rh, _MISSING_PENALTY, 0.0)
     )
 
-    # Left-hand distances
-    lh_a = A[:, _LH_FLAG_IDX]
-    lh_b = B[:, _LH_FLAG_IDX]
-    both_lh   = np.outer(lh_a, lh_b)
-    either_lh = (lh_a[:, None] + lh_b[None, :]) > 0.5
-    only_one_lh = either_lh & (both_lh < 0.5)
+    # Left-hand distances (using boolean logic so identical frames cannot trigger penalty)
+    lh_a = A[:, _LH_FLAG_IDX] > 0.5            # (Ta,) bool
+    lh_b = B[:, _LH_FLAG_IDX] > 0.5            # (Tb,) bool
+    both_lh = lh_a[:, None] & lh_b[None, :]     # (Ta, Tb) bool
+    only_one_lh = lh_a[:, None] ^ lh_b[None, :] # (Ta, Tb) bool (XOR)
 
     lh_shape_dist = np.linalg.norm(
         A[:, None, _LH_SHAPE_SLICE] - B[None, :, _LH_SHAPE_SLICE], axis=2
@@ -127,7 +138,7 @@ def _batch_frame_distances(A: np.ndarray, B: np.ndarray) -> np.ndarray:
         A[:, None, _LH_POS_SLICE] - B[None, :, _LH_POS_SLICE], axis=2
     )
     d_lh = np.where(
-        both_lh > 0.5,
+        both_lh,
         _W_SHAPE * lh_shape_dist + _W_POS * lh_pos_dist,
         np.where(only_one_lh, _MISSING_PENALTY, 0.0)
     )
@@ -182,6 +193,7 @@ class DTWSequenceMatcher:
     ) -> int:
         """
         Loads and pre-normalizes all .npz files in a directory into the template gallery.
+        Pre-packs and pre-resamples all template matrices for maximum inference throughput.
         """
         npz_files = sorted(Path(npz_dir).glob("*_landmarks.npz"))
         if not npz_files:
@@ -202,11 +214,30 @@ class DTWSequenceMatcher:
                     video_name=video_name,
                     trim_to_active=trim_to_active
                 )
-                # Pre-pack to numpy matrix so live queries avoid repeated packing
-                norm_seq._packed = _pack_sequence(norm_seq)
+                # Pre-pack and pre-resample to numpy matrix so live queries avoid repeated work
+                packed = _pack_sequence(norm_seq)
+                norm_seq._packed = packed
+                norm_seq._resampled = _resample_matrix(packed, min(len(packed), MAX_DTW_LEN))
                 self.templates[label] = norm_seq
 
         return len(self.templates)
+
+    @staticmethod
+    def _dtw_distance_matrices(A: np.ndarray, B: np.ndarray) -> float:
+        """Fast DTW calculation on pre-resampled (Ta, D) and (Tb, D) float32 matrices."""
+        Ta, Tb = len(A), len(B)
+        cost_matrix = _batch_frame_distances(A, B)
+
+        dtw = np.full((Ta + 1, Tb + 1), np.inf, dtype=np.float32)
+        dtw[0, 0] = 0.0
+        for i in range(1, Ta + 1):
+            prev = dtw[i - 1, :]
+            cur = dtw[i, :]
+            c = cost_matrix[i - 1, :]
+            for j in range(1, Tb + 1):
+                cur[j] = c[j - 1] + min(prev[j], cur[j - 1], prev[j - 1])
+
+        return float(dtw[Ta, Tb]) / (Ta + Tb)
 
     def compute_dtw_distance(
         self,
@@ -214,40 +245,27 @@ class DTWSequenceMatcher:
         seq_b: NormalizedSequence
     ) -> float:
         """
-        Computes normalized DTW distance using vectorised NumPy frame distances.
-        Both sequences are resampled to DTW_RESAMPLE_LEN before comparison so
-        cost is O(DTW_RESAMPLE_LEN^2) = O(900) per template regardless of
-        recording length — roughly 50x faster than the previous pure-Python loop.
+        Computes normalized DTW distance using vectorized NumPy frame distances.
+        Supports pre-packed/resampled sequence objects transparently.
         """
         if seq_a.length == 0 or seq_b.length == 0:
             raise ValueError("Cannot compute DTW distance on zero-length sequences.")
 
-        # Use pre-packed matrices when available (set by load_gallery_from_npz_dir)
-        mat_a = getattr(seq_a, "_packed", None)
-        if mat_a is None:
-            mat_a = _pack_sequence(seq_a)
-        mat_b = getattr(seq_b, "_packed", None)
-        if mat_b is None:
-            mat_b = _pack_sequence(seq_b)
+        A = getattr(seq_a, "_resampled", None)
+        if A is None:
+            mat_a = getattr(seq_a, "_packed", None)
+            if mat_a is None:
+                mat_a = _pack_sequence(seq_a)
+            A = _resample_matrix(mat_a, min(len(mat_a), MAX_DTW_LEN))
 
-        # Resample both to fixed length
-        A = _resample_matrix(mat_a, DTW_RESAMPLE_LEN)   # (Tf, D)
-        B = _resample_matrix(mat_b, DTW_RESAMPLE_LEN)   # (Tf, D)
-        Tf = DTW_RESAMPLE_LEN
+        B = getattr(seq_b, "_resampled", None)
+        if B is None:
+            mat_b = getattr(seq_b, "_packed", None)
+            if mat_b is None:
+                mat_b = _pack_sequence(seq_b)
+            B = _resample_matrix(mat_b, min(len(mat_b), MAX_DTW_LEN))
 
-        # Build full pairwise cost matrix in one NumPy call
-        cost_matrix = _batch_frame_distances(A, B)        # (Tf, Tf)
-
-        # Standard DTW DP on cost_matrix
-        dtw = np.full((Tf + 1, Tf + 1), np.inf, dtype=np.float32)
-        dtw[0, 0] = 0.0
-        for i in range(1, Tf + 1):
-            for j in range(1, Tf + 1):
-                dtw[i, j] = cost_matrix[i-1, j-1] + min(
-                    dtw[i-1, j], dtw[i, j-1], dtw[i-1, j-1]
-                )
-
-        return float(dtw[Tf, Tf]) / (2 * Tf)
+        return self._dtw_distance_matrices(A, B)
 
     def predict(
         self,
@@ -256,6 +274,7 @@ class DTWSequenceMatcher:
     ) -> List[PredictionResult]:
         """
         Scores query sequence against all enrolled gallery templates.
+        Pre-packs and pre-resamples the query ONCE across the entire gallery.
         Returns top-k candidate labels sorted by highest similarity.
         """
         if not self.templates:
@@ -263,9 +282,24 @@ class DTWSequenceMatcher:
         if query.length == 0:
             raise ValueError("Query sequence has zero frames.")
 
+        # Prepare query matrix ONCE before iterating over gallery
+        A = getattr(query, "_resampled", None)
+        if A is None:
+            mat_q = getattr(query, "_packed", None)
+            if mat_q is None:
+                mat_q = _pack_sequence(query)
+            A = _resample_matrix(mat_q, min(len(mat_q), MAX_DTW_LEN))
+
         scores = []
         for label, template_seq in self.templates.items():
-            dist = self.compute_dtw_distance(query, template_seq)
+            B = getattr(template_seq, "_resampled", None)
+            if B is None:
+                mat_b = getattr(template_seq, "_packed", None)
+                if mat_b is None:
+                    mat_b = _pack_sequence(template_seq)
+                B = _resample_matrix(mat_b, min(len(mat_b), MAX_DTW_LEN))
+
+            dist = self._dtw_distance_matrices(A, B)
             # Similarity mapped monotonically to (0, 1]
             similarity = 1.0 / (1.0 + dist)
             scores.append((label, similarity, dist))

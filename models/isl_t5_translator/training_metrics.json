@@ -1,0 +1,131 @@
+{
+  "base_model": "t5-small",
+  "seed": 42,
+  "epochs": 15,
+  "learning_rate": 0.0005,
+  "batch_size": 8,
+  "device": "cpu",
+  "metrics": {
+    "exact_match": 0.9333,
+    "bleu": 83.68,
+    "rouge_l": 96.0,
+    "sample_count": 15,
+    "avg_inference_ms": 172.31,
+    "training_time_seconds": 402.6,
+    "epochs": 15,
+    "train_sample_count": 64,
+    "test_sample_count": 15,
+    "final_loss": 0.0083
+  },
+  "loss_history": [
+    1.5612,
+    0.4246,
+    0.2649,
+    0.1788,
+    0.1419,
+    0.0836,
+    0.0639,
+    0.0598,
+    0.0346,
+    0.0155,
+    0.0374,
+    0.0199,
+    0.0165,
+    0.0185,
+    0.0083
+  ],
+  "qualitative_review": [
+    {
+      "gloss": "One Water",
+      "prediction": "One water.",
+      "reference": "One water.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Eat",
+      "prediction": "Eat.",
+      "reference": "Eat.",
+      "exact_match": true
+    },
+    {
+      "gloss": "We Drink Milk",
+      "prediction": "We drink milk.",
+      "reference": "We drink milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Two Food",
+      "prediction": "Two food.",
+      "reference": "Two food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "What Food",
+      "prediction": "What is that food?",
+      "reference": "What is that food?",
+      "exact_match": true
+    },
+    {
+      "gloss": "Where",
+      "prediction": "Where is the case?",
+      "reference": "Where?",
+      "exact_match": false
+    },
+    {
+      "gloss": "We Want_Desire_Wish_For Milk",
+      "prediction": "We want milk.",
+      "reference": "We want milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Drink Milk",
+      "prediction": "Drink milk.",
+      "reference": "Drink milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Food",
+      "prediction": "Food.",
+      "reference": "Food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "You Drink",
+      "prediction": "You drink.",
+      "reference": "You drink.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Eat Food",
+      "prediction": "I eat food.",
+      "reference": "I eat food.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Two",
+      "prediction": "Two.",
+      "reference": "Two.",
+      "exact_match": true
+    },
+    {
+      "gloss": "Milk",
+      "prediction": "Milk.",
+      "reference": "Milk.",
+      "exact_match": true
+    },
+    {
+      "gloss": "I_Me Drink",
+      "prediction": "I drink.",
+      "reference": "I drink.",
+      "exact_match": true
+    },
+    {
+      "gloss": "My Food",
+      "prediction": "My food.",
+      "reference": "My food.",
+      "exact_match": true
+    }
+  ],
+  "timestamp": "2026-10-15 20:34:48",
+  "linguistic_disclaimer": "These metrics evaluate lexical and string overlap on a curated ISL grammar set. They do not by themselves establish conversational fluency in Indian Sign Language."
+}

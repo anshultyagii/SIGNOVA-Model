@@ -24,3 +24,5 @@ for word in words:
             "hand variation =", round(float(np.std(hands)), 5),
             "hand nonzero fraction =", round(float(np.mean(hands != 0)), 3)
         )
+
+
