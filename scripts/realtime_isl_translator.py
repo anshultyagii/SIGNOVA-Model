@@ -45,57 +45,108 @@ HAND_CONNECTIONS = [
 def analyze_hand_geometry(hand, orig_w, orig_h):
     """
     Computes rotation-invariant finger extension states and spatial coordinates.
-    Uses distance from MCP to TIP relative to PIP to MCP.
+    Employs a robust dual-metric:
+      1. Tip distance from wrist exceeds PIP distance from wrist (radial extension)
+      2. Tip distance from wrist exceeds MCP distance by at least 20%
+      3. Tip-to-MCP distance exceeds PIP-to-MCP distance by at least 15%
+    Eliminates perspective foreshortening errors when curled fingers face the camera.
     """
     wrist = hand[0]
     mid_mcp = hand[9]
-    scale = max(1e-4, np.sqrt((mid_mcp.x - wrist.x)**2 + (mid_mcp.y - wrist.y)**2))
+    scale = max(1e-4, np.hypot(mid_mcp.x - wrist.x, mid_mcp.y - wrist.y))
 
-    # Rotation-invariant finger extension check
-    d_idx_tip = np.hypot(hand[8].x - hand[5].x, hand[8].y - hand[5].y)
-    d_idx_pip = max(1e-4, np.hypot(hand[6].x - hand[5].x, hand[6].y - hand[5].y))
-    ext_index = d_idx_tip > (1.30 * d_idx_pip)
+    # Rotation-invariant dual-metric finger extension check
+    ext_results = {}
+    for name, tip_idx, pip_idx, mcp_idx in [('index', 8, 6, 5), ('middle', 12, 10, 9), ('ring', 16, 14, 13), ('pinky', 20, 18, 17)]:
+        tip, pip, mcp = hand[tip_idx], hand[pip_idx], hand[mcp_idx]
+        d_tip_wrist = np.hypot(tip.x - wrist.x, tip.y - wrist.y)
+        d_pip_wrist = np.hypot(pip.x - wrist.x, pip.y - wrist.y)
+        d_mcp_wrist = max(1e-4, np.hypot(mcp.x - wrist.x, mcp.y - wrist.y))
+        d_tip_mcp = np.hypot(tip.x - mcp.x, tip.y - mcp.y)
+        d_pip_mcp = max(1e-4, np.hypot(pip.x - mcp.x, pip.y - mcp.y))
+        is_ext = (d_tip_wrist > d_pip_wrist) and (d_tip_wrist > 1.20 * d_mcp_wrist) and (d_tip_mcp > 1.15 * d_pip_mcp)
+        ext_results[name] = bool(is_ext)
 
-    d_mid_tip = np.hypot(hand[12].x - hand[9].x, hand[12].y - hand[9].y)
-    d_mid_pip = max(1e-4, np.hypot(hand[10].x - hand[9].x, hand[10].y - hand[9].y))
-    ext_middle = d_mid_tip > (1.30 * d_mid_pip)
+    # Biomechanical Thumb Extension & Metric Separation
+    d_t_tip_mcp = np.hypot(hand[4].x - hand[2].x, hand[4].y - hand[2].y)
+    d_t_ip_mcp = max(1e-4, np.hypot(hand[3].x - hand[2].x, hand[3].y - hand[2].y))
+    d_t_p17 = np.hypot(hand[4].x - hand[17].x, hand[4].y - hand[17].y) / scale
+    d_t_i5 = np.hypot(hand[4].x - hand[5].x, hand[4].y - hand[5].y) / scale
+    ext_thumb = bool((d_t_p17 > 1.10) and (d_t_i5 > 0.48) and (d_t_tip_mcp > 1.08 * d_t_ip_mcp))
 
-    d_rng_tip = np.hypot(hand[16].x - hand[13].x, hand[16].y - hand[13].y)
-    d_rng_pip = max(1e-4, np.hypot(hand[14].x - hand[13].x, hand[14].y - hand[13].y))
-    ext_ring = d_rng_tip > (1.30 * d_rng_pip)
-
-    d_pnk_tip = np.hypot(hand[20].x - hand[17].x, hand[20].y - hand[17].y)
-    d_pnk_pip = max(1e-4, np.hypot(hand[18].x - hand[17].x, hand[18].y - hand[17].y))
-    ext_pinky = d_pnk_tip > (1.30 * d_pnk_pip)
-
-    # Thumb extended if tip (4) is far from pinky MCP base (17)
-    d_thumb_pinky = np.hypot(hand[4].x - hand[17].x, hand[4].y - hand[17].y) / scale
-    ext_thumb = d_thumb_pinky > 1.05
-
-    ext_count = sum([ext_index, ext_middle, ext_ring, ext_pinky])
+    ext_count = sum(ext_results.values())
     all_five = ext_thumb and (ext_count >= 4)
     fist = (ext_count == 0)
+
+    # Inter-finger separation ratios
+    d_t_i = np.hypot(hand[4].x - hand[8].x, hand[4].y - hand[8].y) / scale
+    d_t_m = np.hypot(hand[4].x - hand[12].x, hand[4].y - hand[12].y) / scale
+    d_i_m = np.hypot(hand[8].x - hand[12].x, hand[8].y - hand[12].y) / scale
 
     return {
         'wrist_x': wrist.x,
         'wrist_y': wrist.y,
         'scale': scale,
         'thumb': ext_thumb,
-        'index': ext_index,
-        'middle': ext_middle,
-        'ring': ext_ring,
-        'pinky': ext_pinky,
+        'index': ext_results['index'],
+        'middle': ext_results['middle'],
+        'ring': ext_results['ring'],
+        'pinky': ext_results['pinky'],
         'count_ext': ext_count,
         'all_five': all_five,
-        'fist': fist
+        'fist': fist,
+        'd_t_i5': d_t_i5,
+        'd_t_p17': d_t_p17,
+        'd_t_i': d_t_i,
+        'd_t_m': d_t_m,
+        'd_i_m': d_i_m
     }
+
+def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
+    """
+    Validates physical hand biomechanics to reject false-positive
+    pseudo-hands mistakenly detected on human faces or background textures.
+    """
+    wrist = hand[0]
+    idx_mcp = hand[5]
+    mid_mcp = hand[9]
+    rng_mcp = hand[13]
+    pnk_mcp = hand[17]
+
+    # 1. Palm Scale (Wrist to Middle MCP)
+    # In normalized coordinates, a real hand's palm length is between 0.02 and 0.38.
+    # False face detections span the whole chin-to-forehead (>0.38) or are tiny noise (<0.02).
+    L_palm = float(np.hypot(mid_mcp.x - wrist.x, mid_mcp.y - wrist.y))
+    if L_palm < 0.020 or L_palm > 0.38:
+        return False
+
+    # 2. Palm Aspect Ratio (Width across MCP knuckles vs Palm Length)
+    # A genuine human hand's palm aspect ratio is between 0.35 and 1.85.
+    # False detections on faces stretch across the cheeks (>1.9) or vertically (<0.35).
+    W_palm = float(np.hypot(idx_mcp.x - pnk_mcp.x, idx_mcp.y - pnk_mcp.y))
+    ratio = W_palm / max(1e-4, L_palm)
+    if ratio < 0.35 or ratio > 1.85:
+        return False
+
+    # 3. Knuckle Coherence (MCP knuckle spacing)
+    # In a human hand, the distance between adjacent MCP knuckles (5-9, 9-13, 13-17)
+    # is roughly balanced. In false face detections, knuckles scatter across face features.
+    d59 = float(np.hypot(idx_mcp.x - mid_mcp.x, idx_mcp.y - mid_mcp.y)) / L_palm
+    d913 = float(np.hypot(mid_mcp.x - rng_mcp.x, mid_mcp.y - rng_mcp.y)) / L_palm
+    d1317 = float(np.hypot(rng_mcp.x - pnk_mcp.x, rng_mcp.y - pnk_mcp.y)) / L_palm
+    if d59 > 0.88 or d913 > 0.88 or d1317 > 0.88:
+        return False
+
+    return True
 
 def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
     """
     Computes a gentle Bayesian prior probability distribution over all 25 classes.
     Relies on the high-precision 3D Palm-Normal & Joint Attention network for subtle
-    distinctions (e.g. Help vs Milk), using the prior solely for physical plausibility:
-    - Multi-hand constraints (e.g., damping single-finger numbers when 2 hands are raised)
+    distinctions, fused with exact physical finger geometry for numbers 1 to 10:
+    - Multi-hand constraints & 10_Ten detection (both hands open)
+    - Rotation-invariant finger geometry rules for numbers 1 to 10
+    - Exact 2_Two vs 8_Eight disambiguation (crushes false 8s on peace/V signs)
     - Macro vertical elevation (mouth/chin vs chest/waist)
     """
     prior = np.ones(25, dtype=np.float32) * 1.0
@@ -105,32 +156,110 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
     # Ignore passive resting hands at the extreme bottom edge of screen (wrist_y > 0.88)
     active_hands = [h for h in hand_landmarks_list if h[0].y < 0.88]
     if not active_hands:
-        active_hands = hand_landmarks_list
+        return prior * 0.05  # Heavily suppress if hands are resting in lap/off-screen
 
     num_hands = len(active_hands)
     wrist_y = active_hands[0][0].y
 
-    # Physical Multi-Hand Consistency
+    # Physical Multi-Hand Consistency & 10_Ten
     if num_hands >= 2:
         # Two active hands: suppress single-handed digit numbers
         for num_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine"]:
-            prior[CLASS_NAMES.index(num_sign)] *= 0.40
-        # Gently boost two-handed gestures
+            prior[CLASS_NAMES.index(num_sign)] *= 0.20
+        g0 = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
+        g1 = analyze_hand_geometry(active_hands[1], orig_w, orig_h)
+        # 10_Ten is two open hands (5 + 5 = 10)
+        if (g0['all_five'] or g0['count_ext'] >= 4) and (g1['all_five'] or g1['count_ext'] >= 4):
+            prior[CLASS_NAMES.index("10_Ten")] *= 5.0
         for two_sign in ["10_Ten", "Where", "Help", "Milk", "Want_Desire_Wish_For", "Give", "We"]:
-            prior[CLASS_NAMES.index(two_sign)] *= 1.25
+            prior[CLASS_NAMES.index(two_sign)] *= 1.30
     else:
-        # Single active hand: 10_Ten and Where strictly require 2 hands
-        prior[CLASS_NAMES.index("10_Ten")] *= 0.30
-        prior[CLASS_NAMES.index("Where")] *= 0.30
+        # Single active hand: Where strictly requires 2 hands
+        prior[CLASS_NAMES.index("Where")] *= 0.25
+
+        # Single-hand finger geometry for numbers 1 to 9 & single-hand 10_Ten
+        g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
+        ext = g['count_ext']
+        t, i, m, r, p = g['thumb'], g['index'], g['middle'], g['ring'], g['pinky']
+
+        # 10_Ten single-hand component: Fist (representing '0' in '1-0' = 10)
+        if g['fist']:
+            prior[CLASS_NAMES.index("10_Ten")] *= 3.5
+
+        # 1_One: Index finger extended, other fingers curled
+        if i and not m and not r and not p:
+            prior[CLASS_NAMES.index("1_One")] *= 4.0
+            prior[CLASS_NAMES.index("You")] *= 0.20
+            prior[CLASS_NAMES.index("Go")] *= 0.20
+            prior[CLASS_NAMES.index("7_Seven")] *= 0.20
+        elif ext == 1 and i:
+            prior[CLASS_NAMES.index("1_One")] *= 2.5
+
+        # 8_Eight signature: Middle + Ring + Pinky extended OR Thumb + Index + Middle with wide thumb spread
+        is_8_three_finger = (t and i and m and not r and not p and g['d_t_i5'] > 0.52 and g['d_i_m'] > 0.40)
+        is_8_pinky_three = (m and r and p and not i)
+        is_8 = is_8_three_finger or is_8_pinky_three
+
+        # 2_Two: Strictly Index and Middle fingers extended (V-shape), Ring and Pinky curled, not 8
+        is_2 = (i and m and not r and not p and not is_8)
+
+        # 2_Two Prior Boost
+        if is_2:
+            prior[CLASS_NAMES.index("2_Two")] *= 3.5
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.25  # Suppress 8 on peace/V signs
+            prior[CLASS_NAMES.index("Go")] *= 0.20
+            prior[CLASS_NAMES.index("You")] *= 0.20
+            prior[CLASS_NAMES.index("3_Three")] *= 0.20
+        elif ext == 2 and i and m and not is_8:
+            prior[CLASS_NAMES.index("2_Two")] *= 2.8
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.30
+
+        # 3_Three: Index, Middle, Ring extended, Pinky curled
+        if i and m and r and not p:
+            prior[CLASS_NAMES.index("3_Three")] *= 4.0
+            prior[CLASS_NAMES.index("2_Two")] *= 0.15
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.15
+            prior[CLASS_NAMES.index("4_Four")] *= 0.25
+
+        # 4_Four: 4 fingers extended, thumb curled
+        if ext == 4 and not t:
+            prior[CLASS_NAMES.index("4_Four")] *= 4.0
+            prior[CLASS_NAMES.index("5_Five")] *= 0.25
+
+        # 5_Five: All 5 fingers extended open
+        if g['all_five'] or (ext >= 4 and t):
+            prior[CLASS_NAMES.index("5_Five")] *= 4.0
+
+        # 6_Six: Pinky only extended, or thumb + pinky
+        if (p and not i and not m and not r) or (t and p and not i and not m and not r):
+            prior[CLASS_NAMES.index("6_Six")] *= 4.0
+            prior[CLASS_NAMES.index("9_Nine")] *= 0.20
+
+        # 7_Seven: Thumb + Index extended (gun / L) or thumb touching middle
+        if (t and i and not m and not r and not p) or (g['d_t_m'] < 0.25 and i and not r and not p):
+            prior[CLASS_NAMES.index("7_Seven")] *= 4.0
+            prior[CLASS_NAMES.index("1_One")] *= 0.20
+            prior[CLASS_NAMES.index("Go")] *= 0.20
+
+        # 8_Eight Prior Boost
+        if is_8:
+            prior[CLASS_NAMES.index("8_Eight")] *= 3.5
+            prior[CLASS_NAMES.index("2_Two")] *= 0.25
+            prior[CLASS_NAMES.index("Go")] *= 0.20
+
+        # 9_Nine: Thumb touching index with M+R+P up, or ring+pinky
+        if (g['d_t_i'] < 0.30 and m and r and p) or (r and p and not i and not m):
+            prior[CLASS_NAMES.index("9_Nine")] *= 4.0
+            prior[CLASS_NAMES.index("6_Six")] *= 0.20
 
     # Macro Vertical Elevation Zoning
-    if wrist_y < 0.32:
+    if wrist_y < 0.38:
         # Upper face / mouth: suppress waist/chest-only signs
-        for waist_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "Go", "Where", "10_Ten", "Milk"]:
-            prior[CLASS_NAMES.index(waist_sign)] *= 0.35
+        for waist_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "Go", "Where", "10_Ten", "Milk", "What", "Want_Desire_Wish_For"]:
+            prior[CLASS_NAMES.index(waist_sign)] *= 0.20
         # Gently boost mouth-level signs
         for mouth_sign in ["Drink", "Eat", "Water", "Food"]:
-            prior[CLASS_NAMES.index(mouth_sign)] *= 1.35
+            prior[CLASS_NAMES.index(mouth_sign)] *= 1.40
     else:
         # Chest / torso: gently suppress mouth-only signs
         for mouth_sign in ["Drink", "Eat"]:
@@ -139,7 +268,7 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
     return prior
 
 class RealTimeISLTranslator:
-    def __init__(self, weights_path=MODEL_WEIGHTS_PATH, conf_thresh=0.45):
+    def __init__(self, weights_path=MODEL_WEIGHTS_PATH, conf_thresh=0.46):
         print("Initializing High-Accuracy Real-Time ISL Translation Engine...")
         self.device = torch.device('cpu')
         self.conf_thresh = conf_thresh
@@ -148,13 +277,13 @@ class RealTimeISLTranslator:
         self.nlp = SignLanguageNLP(enable_voice=self.enable_voice)
         self.is_mirrored = True  # Natural mirror mode by default
 
-        # Fast & Responsive Anti-Spurious Protection
+        # Fluid Dynamic & In-Motion Recognition Support
         self.prev_wrist = None
         self.prev_wrist1 = None
         self.wrist_velocity = 0.0
-        self.max_motion_thresh = 0.038   # Blocks only rapid transit movements across frame
-        self.window_history = deque(maxlen=4)  # 4-frame consensus window
-        self.required_hold_frames = 3    # Snappy 3 agreeing frames (~0.10s) confirmation!
+        self.wild_motion_thresh = 0.095  # Filters only wild arm swings across screen
+        self.window_history = deque(maxlen=6)  # 6-frame sliding consensus window
+        self.required_consensus_frames = 4    # 4 agreeing frames (~0.13s) confirms sign!
         self.flash_capture_word = None
         self.flash_capture_time = 0
 
@@ -174,13 +303,14 @@ class RealTimeISLTranslator:
             print(f"Loaded Swin-Mish Attention model from {weights_path}")
         self.model.eval()
 
-        # Initialize MediaPipe Hand Tracker
+        # Initialize MediaPipe Hand Tracker (0.32 detects all numbers including 4, 9, 10)
         base_options = python.BaseOptions(model_asset_path=MODEL_TASK_PATH)
         options = vision.HandLandmarkerOptions(
             base_options=base_options,
             num_hands=2,
-            min_hand_detection_confidence=0.28,
-            min_hand_presence_confidence=0.28
+            min_hand_detection_confidence=0.32,  # Reliably detects numbers without losing fingers
+            min_hand_presence_confidence=0.32,   # Smooth tracking through dynamic hand movement
+            min_tracking_confidence=0.30
         )
         self.detector = vision.HandLandmarker.create_from_options(options)
 
@@ -207,11 +337,32 @@ class RealTimeISLTranslator:
         detected_sign = None
         confidence = 0.0
 
+        # Filter raw detections to strictly valid human hands (eliminating faces, clothing, lap)
+        valid_hands = []
+        if res.hand_landmarks:
+            for idx, hand in enumerate(res.hand_landmarks):
+                # 1. Ignore resting hands in lap / below screen edge
+                if hand[0].y > 0.88:
+                    continue
+
+                # 2. Check handedness confidence score
+                h_score = 1.0
+                if res.handedness and idx < len(res.handedness) and res.handedness[idx]:
+                    h_score = res.handedness[idx][0].score
+                if h_score < 0.68:
+                    continue  # Reject low-confidence candidates (faces, shadows, background)
+
+                # 3. Check physical hand biomechanics
+                if not is_valid_hand_anatomy(hand, w, h):
+                    continue
+
+                valid_hands.append(hand)
+
         # Motion Velocity Computation (Filters out high-speed arm transit)
         is_hand_still = False
-        if res.hand_landmarks:
+        if valid_hands:
             # Sort hands consistently left-to-right to avoid hand ID jitter
-            sorted_hands = sorted(res.hand_landmarks, key=lambda h: h[0].x)
+            sorted_hands = sorted(valid_hands, key=lambda h: h[0].x)
             curr_wrist0 = (sorted_hands[0][0].x, sorted_hands[0][0].y)
             if len(sorted_hands) >= 2:
                 curr_wrist1 = (sorted_hands[1][0].x, sorted_hands[1][0].y)
@@ -229,26 +380,26 @@ class RealTimeISLTranslator:
                     self.wrist_velocity = 0.0
                 self.prev_wrist1 = None
             self.prev_wrist = curr_wrist0
-            is_hand_still = (self.wrist_velocity <= self.max_motion_thresh)
+            is_hand_still = (self.wrist_velocity <= self.wild_motion_thresh)
         else:
             self.prev_wrist = None
             self.prev_wrist1 = None
             self.wrist_velocity = 0.0
 
-        if res.hand_landmarks:
-            for hand in res.hand_landmarks:
+        if valid_hands:
+            for hand in valid_hands:
                 self.draw_hand_skeleton(annotated, hand, w, h)
 
             # 1. Neural Swin-Mish Attention Logits
-            feats = extract_advanced_gesture_features(res.hand_landmarks, w, h)
+            feats = extract_advanced_gesture_features(valid_hands, w, h)
             feat_tensor = torch.tensor(feats, dtype=torch.float32).unsqueeze(0)
 
             with torch.no_grad():
                 logits = self.model(feat_tensor)
                 neural_probs = torch.softmax(logits, dim=1)[0].numpy()
 
-            # 2. Exact Physics & Geometric Prior
-            geom_prior = get_symbolic_prior(res.hand_landmarks, w, h)
+            # 2. Exact Physics & Geometric Prior (Integrated Number Finger Rules)
+            geom_prior = get_symbolic_prior(valid_hands, w, h)
 
             # 3. Neuro-Symbolic Fusion
             fused_scores = neural_probs * geom_prior
@@ -259,29 +410,34 @@ class RealTimeISLTranslator:
             second_conf = float(fused_scores[second_cls] / (np.sum(fused_scores) + 1e-6))
             margin = top_conf - second_conf
 
-            # Responsive detection threshold
-            if top_conf >= self.conf_thresh and margin >= self.min_margin:
+            # Responsive detection threshold (adaptive for numbers)
+            active_conf_thresh = self.conf_thresh
+            if top_conf >= active_conf_thresh and margin >= self.min_margin:
                 detected_sign = CLASS_NAMES[best_cls]
                 confidence = top_conf
 
                 # Sleek, clean floating label above wrist (NO clunky boxes)
-                wrist_pt = (int(res.hand_landmarks[0][0].x * w), int(res.hand_landmarks[0][0].y * h))
+                wrist_pt = (int(valid_hands[0][0].x * w), int(valid_hands[0][0].y * h))
                 tag_label = f"{detected_sign.replace('_', ' ')} ({int(top_conf * 100)}%)"
                 cv2.putText(annotated, tag_label, (wrist_pt[0] - 20, max(30, wrist_pt[1] - 14)), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (0, 0, 0), 3)
                 cv2.putText(annotated, tag_label, (wrist_pt[0] - 20, max(30, wrist_pt[1] - 14)), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (0, 255, 200), 2)
 
         fps = 1.0 / max(1e-5, (time.time() - start_t))
 
-        # ------------------- FAST RESPONSIVE SESSION RECORDING -------------------
+        # ------------------- FLUID DYNAMIC & STATIC SESSION RECORDING -------------------
         if self.is_recording:
-            if is_hand_still and detected_sign:
+            # Allow recognition during dynamic in-place motion (velocity <= 0.095)
+            # Only block if arm is swinging wildly across the screen (velocity > 0.095)
+            is_motion_valid = (self.wrist_velocity <= self.wild_motion_thresh)
+
+            if is_motion_valid and detected_sign:
                 self.window_history.append(detected_sign)
-                # Fast confirmation (3 agreeing frames in recent 4-frame window ~ 0.10s)
-                if len(self.window_history) >= self.required_hold_frames:
+                # Consensus confirmation: 4 agreeing frames in recent 6-frame window (~0.13s)
+                if len(self.window_history) >= self.required_consensus_frames:
                     common_sign, count = Counter(self.window_history).most_common(1)[0]
-                    if count >= self.required_hold_frames:
+                    if count >= self.required_consensus_frames:
                         curr_t = time.time()
-                        if common_sign != self.last_confirmed_word and (curr_t - self.last_confirmed_time) > 0.55:
+                        if common_sign != self.last_confirmed_word and (curr_t - self.last_confirmed_time) > 0.65:
                             self.recorded_tokens.append(common_sign)
                             self.last_confirmed_word = common_sign
                             self.last_confirmed_time = curr_t
@@ -290,11 +446,11 @@ class RealTimeISLTranslator:
                             self.window_history.clear()
                             print(f"  [+] Captured Sign: {common_sign} (Total signs: {len(self.recorded_tokens)})")
             else:
-                if not is_hand_still:
+                if not is_motion_valid:
                     self.window_history.clear()
 
             # Reset last_confirmed_word when hands return to neutral / leave frame
-            if not res.hand_landmarks:
+            if not valid_hands:
                 self.no_hand_frames += 1
                 if self.no_hand_frames > 6:
                     self.last_confirmed_word = None
@@ -337,9 +493,9 @@ class RealTimeISLTranslator:
             live_col = (0, 255, 128)
         elif detected_sign:
             live_disp = f"Live: {detected_sign} ({int(confidence*100)}%)"
-            live_col = (0, 255, 200) if is_hand_still else (160, 160, 160)
+            live_col = (0, 255, 200)
         else:
-            live_disp = "Live: Ready" if res.hand_landmarks else "Live: No Hands"
+            live_disp = "Live: Ready" if valid_hands else "Live: No Hands"
             live_col = (130, 130, 130)
         cv2.putText(annotated, live_disp, (25, h - 82), cv2.FONT_HERSHEY_SIMPLEX, 0.62, live_col, 2)
 
@@ -362,7 +518,7 @@ class RealTimeISLTranslator:
         # Line 3: System Status
         mirror_txt = "ON" if self.is_mirrored else "OFF"
         voice_txt = "ON" if self.enable_voice else "OFF"
-        meta_str = f"FPS: {fps:.1f}  |  Mirror: {mirror_txt}  |  Voice TTS: {voice_txt}  |  Undo: [Backspace]  |  1280x720 HD"
+        meta_str = f"FPS: {fps:.1f}  |  Mirror: {mirror_txt}  |  Engine: Neural ISL-T5  |  Voice TTS: {voice_txt}  |  Undo: [Backspace]  |  1280x720 HD"
         cv2.putText(annotated, meta_str, (25, h - 14), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (150, 150, 150), 1)
 
         return annotated

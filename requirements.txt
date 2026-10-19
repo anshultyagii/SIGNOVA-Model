@@ -13,3 +13,5 @@ pillow>=9.5.0
 scipy>=1.10.0
 tqdm>=4.65.0
 pyyaml>=6.0
+transformers>=4.30.0
+safetensors>=0.3.0
