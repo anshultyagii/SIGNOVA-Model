@@ -141,6 +141,21 @@ class SignLanguageNLP:
         if len(cleaned) <= 1:
             return cleaned
 
+        # Multi-digit sequential numbers: "one" + "ten"/"zero" -> "ten" (ISL 1 + 0 = 10)
+        merged = []
+        i = 0
+        while i < len(cleaned):
+            if i + 1 < len(cleaned) and cleaned[i] == "one" and cleaned[i+1] in ["ten", "zero", "0"]:
+                merged.append("ten")
+                i += 2
+            else:
+                merged.append(cleaned[i])
+                i += 1
+        cleaned = merged
+
+        if len(cleaned) <= 1:
+            return cleaned
+
         # 2. Syntactic Denoising: Distinguish Declarative Intent vs Genuine Questions
         # If the sequence has a 1st-person declarative structure (I/we + want/eat/drink/go + food/water/milk),
         # an isolated 'what' or 'where' sandwiched in the sequence is an arm-transit artifact.

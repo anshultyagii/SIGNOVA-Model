@@ -144,183 +144,244 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
     - Complete disambiguation of 2_Two vs 8_Eight (V-sign is 100% 2, 8 never misfires on 2)
     - Complete disambiguation of You vs 6_Six vs 10_Ten (pointing forward is 100% You)
     - Complete disambiguation of What vs Water (palm-up open hand is What; Water requires chin/mouth)
-    - Suppression of Milk on all static numbers and non-milking signs
+    - Full support for Help and Milk (both 2-handed and single-handed partial)
+    - Full disambiguation of I_Me vs My (index pointing to chest vs open palm on chest)
+    - Full disambiguation of Food vs Eat (chin elevation waft vs pinched mouth contact)
+    - Full disambiguation of Want vs What (two-handed cupped inward pull)
+    - Full support for ISL 7_Seven (L / gun shape or thumb-middle contact)
     """
     prior = np.ones(25, dtype=np.float32) * 1.0
     if not hand_landmarks_list:
         return prior
 
-    # Ignore passive resting hands at the extreme bottom edge of screen (wrist_y > 0.88)
-    active_hands = [h for h in hand_landmarks_list if h[0].y < 0.88]
+    # Ignore passive resting hands whose wrist is off the bottom screen edge (wrist_y > 0.96)
+    active_hands = [h for h in hand_landmarks_list if h[0].y <= 0.96]
     if not active_hands:
-        return prior * 0.05  # Heavily suppress if hands are resting in lap/off-screen
+        return prior * 0.05
 
     num_hands = len(active_hands)
     wrist_y = active_hands[0][0].y
-    wrist = active_hands[0][0]
-    hand0 = active_hands[0]
 
     # Compute 3D palm normal for primary hand
-    wx, wy, wz = wrist.x, wrist.y, wrist.z
-    idx_mcp = hand0[5]
-    pnk_mcp = hand0[17]
-    v1 = np.array([idx_mcp.x - wx, idx_mcp.y - wy, idx_mcp.z - wz])
-    v2 = np.array([pnk_mcp.x - wx, pnk_mcp.y - wy, pnk_mcp.z - wz])
+    p0 = np.array([active_hands[0][0].x, active_hands[0][0].y, active_hands[0][0].z])
+    p5 = np.array([active_hands[0][5].x, active_hands[0][5].y, active_hands[0][5].z])
+    p17 = np.array([active_hands[0][17].x, active_hands[0][17].y, active_hands[0][17].z])
+    v1 = p5 - p0
+    v2 = p17 - p0
     normal = np.cross(v1, v2)
     norm_mag = np.linalg.norm(normal)
     normal = normal / max(1e-5, norm_mag)
     normal_y = normal[1]  # positive = palm facing UP
 
     # Index pointing vector (depth z-direction into camera)
+    hand0 = active_hands[0]
+    idx_mcp = hand0[5]
     idx_tip = hand0[8]
     d_z_pointing = idx_tip.z - idx_mcp.z  # negative = pointing towards camera
 
-    # Physical Multi-Hand Consistency & 10_Ten
+    p_milk = neural_probs[CLASS_NAMES.index("Milk")] if neural_probs is not None else 0.0
+    p_help = neural_probs[CLASS_NAMES.index("Help")] if neural_probs is not None else 0.0
+    p_want = neural_probs[CLASS_NAMES.index("Want_Desire_Wish_For")] if neural_probs is not None else 0.0
+    p_food = neural_probs[CLASS_NAMES.index("Food")] if neural_probs is not None else 0.0
+    p_eat = neural_probs[CLASS_NAMES.index("Eat")] if neural_probs is not None else 0.0
+    p_my = neural_probs[CLASS_NAMES.index("My")] if neural_probs is not None else 0.0
+    p_ime = neural_probs[CLASS_NAMES.index("I_Me")] if neural_probs is not None else 0.0
+    p_seven = neural_probs[CLASS_NAMES.index("7_Seven")] if neural_probs is not None else 0.0
+    p_you = neural_probs[CLASS_NAMES.index("You")] if neural_probs is not None else 0.0
+
     if num_hands >= 2:
         # Two active hands: suppress single-handed digit numbers and single-handed signs
         for num_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "You"]:
-            prior[CLASS_NAMES.index(num_sign)] *= 0.15
+            prior[CLASS_NAMES.index(num_sign)] *= 0.10
         g0 = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         g1 = analyze_hand_geometry(active_hands[1], orig_w, orig_h)
+
         # 10_Ten is two open hands (5 + 5 = 10)
-        if (g0['all_five'] or g0['count_ext'] >= 4) and (g1['all_five'] or g1['count_ext'] >= 4):
+        is_ten_two_hands = (g0['all_five'] or g0['count_ext'] >= 4) and (g1['all_five'] or g1['count_ext'] >= 4)
+        if is_ten_two_hands and p_milk < 0.35 and p_want < 0.35:
             prior[CLASS_NAMES.index("10_Ten")] *= 5.0
-            prior[CLASS_NAMES.index("Milk")] *= 0.10
-        for two_sign in ["10_Ten", "Where", "Help", "Milk", "Want_Desire_Wish_For", "Give", "We"]:
+
+        for two_sign in ["Where", "Give", "We"]:
             prior[CLASS_NAMES.index(two_sign)] *= 1.30
+
+        # Help vs Milk Disambiguation in 2-handed mode:
+        # Help: One hand forms a flat base tray (normal_y > 0.02 or ext >= 3),
+        # and other hand forms a fist/thumbs-up nearby.
+        has_flat_base = (g0['count_ext'] >= 3 or g1['count_ext'] >= 3)
+        has_fist_hand = (g0['fist'] or g1['fist'] or (g0['thumb'] and g0['count_ext'] <= 1) or (g1['thumb'] and g1['count_ext'] <= 1))
+        wrists_dist = np.hypot(active_hands[0][0].x - active_hands[1][0].x, active_hands[0][0].y - active_hands[1][0].y)
+
+        if (has_flat_base and has_fist_hand and wrists_dist < 0.32) or p_help >= 0.25:
+            prior[CLASS_NAMES.index("Help")] *= 4.5
+            prior[CLASS_NAMES.index("Milk")] *= 0.02
+        elif (g0['fist'] and g1['fist']) or (g0['count_ext'] <= 2 and g1['count_ext'] <= 2):
+            # Both hands are fists / milking squeeze motion
+            prior[CLASS_NAMES.index("Milk")] *= 4.0
+            prior[CLASS_NAMES.index("Help")] *= 0.05
+        else:
+            if p_help > p_milk:
+                prior[CLASS_NAMES.index("Help")] *= 2.5
+                prior[CLASS_NAMES.index("Milk")] *= 0.20
+            else:
+                prior[CLASS_NAMES.index("Milk")] *= 2.5
+                prior[CLASS_NAMES.index("Help")] *= 0.20
+
+        # Want vs What in 2-handed mode:
+        # Want: Two hands pulling towards torso, cupped / palms up
+        if p_want >= 0.15 or (wrist_y > 0.38 and not is_ten_two_hands):
+            prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 3.5
+            prior[CLASS_NAMES.index("What")] *= 0.15
     else:
         # Single active hand: Where strictly requires 2 hands
-        prior[CLASS_NAMES.index("Where")] *= 0.15
+        prior[CLASS_NAMES.index("Where")] *= 0.05
 
-        # Single-hand finger geometry for numbers 1 to 9 & single-hand 10_Ten
         g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         ext = g['count_ext']
         t, i, m, r, p = g['thumb'], g['index'], g['middle'], g['ring'], g['pinky']
 
-        # ----------------- NUMBER SUPPRESSION OF MILK -----------------
-        # Any single-hand number gesture suppresses Milk (Milk is milking gesture, not a number!)
-        if ext in [1, 2, 3, 4, 5] or g['fist']:
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
+        is_pointing_forward = (d_z_pointing < -0.015)
+        is_index_pointing = bool(i and not m and not r and not p)
+        # Pointing to chest (I_Me)
+        is_pointing_to_chest = (is_index_pointing and d_z_pointing > 0.008 and wrist_y > 0.35)
+
+        # Help on single hand: A single pointing finger or isolated number is NEVER Help!
+        if is_index_pointing or ext in [1, 2, 3, 4, 5]:
+            prior[CLASS_NAMES.index("Help")] *= 0.01
+
+        # ----------------- I_Me vs My DISAMBIGUATION -----------------
+        if is_pointing_to_chest or (is_index_pointing and p_ime >= 0.20):
+            prior[CLASS_NAMES.index("I_Me")] *= 4.5
+            prior[CLASS_NAMES.index("My")] *= 0.05
+            prior[CLASS_NAMES.index("1_One")] *= 0.10
+            prior[CLASS_NAMES.index("You")] *= 0.10
+        elif (g['all_five'] or ext >= 4) and wrist_y > 0.38 and normal_y < 0.05 and p_my >= 0.15:
+            # Flat open palm resting/facing chest is My
+            prior[CLASS_NAMES.index("My")] *= 4.5
+            prior[CLASS_NAMES.index("I_Me")] *= 0.05
+            prior[CLASS_NAMES.index("5_Five")] *= 0.20
 
         # ----------------- 2_Two vs 8_Eight DISAMBIGUATION -----------------
         p_8 = neural_probs[CLASS_NAMES.index("8_Eight")] if neural_probs is not None else 0.5
         p_2 = neural_probs[CLASS_NAMES.index("2_Two")] if neural_probs is not None else 0.5
 
-        # Standard ISL 8: Middle + Ring + Pinky up, Index curled
         is_8_std = bool(m and r and p and not i)
-        # 3-finger 8: Thumb, Index, Middle up with wide thumb abduction (>0.58),
-        # but ONLY when neural network explicitly favors 8 over 2
         is_8_three = bool(t and i and m and not r and not p and g['d_t_i5'] > 0.58 and p_8 > p_2)
         is_8 = is_8_std or is_8_three
-
-        # 2_Two: Strictly Index and Middle extended (V-shape), Ring and Pinky curled
         is_2 = bool(i and m and not r and not p and not is_8)
 
         if is_2:
-            prior[CLASS_NAMES.index("2_Two")] *= 3.5
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.15  # Suppress 8 on peace/V signs
+            prior[CLASS_NAMES.index("2_Two")] *= 4.0
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
             prior[CLASS_NAMES.index("Go")] *= 0.15
             prior[CLASS_NAMES.index("You")] *= 0.15
             prior[CLASS_NAMES.index("3_Three")] *= 0.15
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
         elif is_8:
-            prior[CLASS_NAMES.index("8_Eight")] *= 3.5
-            prior[CLASS_NAMES.index("2_Two")] *= 0.20
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
+            prior[CLASS_NAMES.index("8_Eight")] *= 4.0
+            prior[CLASS_NAMES.index("2_Two")] *= 0.10
+
+        # ----------------- 7_Seven DISAMBIGUATION -----------------
+        # Thumb + Index extended (L / gun shape) or thumb touching middle tip
+        is_7_gun = bool(t and i and not m and not r and not p)
+        is_7_middle_touch = bool(g['d_t_m'] < 0.38 and not r and not p and not is_2 and not is_pointing_to_chest)
+        is_7 = is_7_gun or is_7_middle_touch
+
+        if is_7 and not is_pointing_forward and not is_pointing_to_chest:
+            prior[CLASS_NAMES.index("7_Seven")] *= 4.5
+            prior[CLASS_NAMES.index("You")] *= 0.05
+            prior[CLASS_NAMES.index("1_One")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.02
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
 
         # ----------------- YOU vs 6_Six vs 10_Ten vs 1_One -----------------
-        # In You: Hand points forward towards camera (d_z_pointing < -0.02)
-        is_pointing_forward = (d_z_pointing < -0.025)
-        is_index_pointing = bool(i and not m and not r and not p)
+        if (is_pointing_forward or (is_index_pointing and wrist_y > 0.40 and not is_pointing_to_chest and not is_7)) and p_you >= 0.20:
+            prior[CLASS_NAMES.index("You")] *= 4.0
+            prior[CLASS_NAMES.index("6_Six")] *= 0.05
+            prior[CLASS_NAMES.index("10_Ten")] *= 0.05
+            prior[CLASS_NAMES.index("Help")] *= 0.01
 
-        if is_pointing_forward or (is_index_pointing and wrist_y > 0.40 and d_z_pointing < 0.01):
-            p_you = neural_probs[CLASS_NAMES.index("You")] if neural_probs is not None else 0.5
-            p_one = neural_probs[CLASS_NAMES.index("1_One")] if neural_probs is not None else 0.5
-            if p_you >= p_one * 0.7 or is_pointing_forward:
-                prior[CLASS_NAMES.index("You")] *= 3.5
-                prior[CLASS_NAMES.index("6_Six")] *= 0.10   # Suppress rogue 6 on pointing
-                prior[CLASS_NAMES.index("10_Ten")] *= 0.10  # Suppress rogue 10 on pointing
-                prior[CLASS_NAMES.index("Milk")] *= 0.05
+        # 1_One: Upright vertical index finger pointing UP
+        if is_index_pointing and not is_pointing_forward and not is_pointing_to_chest and not is_7:
+            if idx_tip.y < idx_mcp.y:
+                prior[CLASS_NAMES.index("1_One")] *= 4.0
+                prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+                prior[CLASS_NAMES.index("2_Two")] *= 0.05
+                prior[CLASS_NAMES.index("6_Six")] *= 0.05
+                prior[CLASS_NAMES.index("10_Ten")] *= 0.05
+                prior[CLASS_NAMES.index("You")] *= 0.10
 
-        # 1_One: Upright vertical index finger pointing UP (not forward)
-        if is_index_pointing and not is_pointing_forward:
-            prior[CLASS_NAMES.index("1_One")] *= 4.0
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("2_Two")] *= 0.05
-            prior[CLASS_NAMES.index("6_Six")] *= 0.10
-            prior[CLASS_NAMES.index("10_Ten")] *= 0.10
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
-
-        # 6_Six: Pinky only extended, thumb tucked or out, NOT pointing forward
+        # 6_Six: Pinky only extended
         if (p and not i and not m and not r) and not is_pointing_forward:
-            prior[CLASS_NAMES.index("6_Six")] *= 4.0
-            prior[CLASS_NAMES.index("You")] *= 0.15
+            prior[CLASS_NAMES.index("6_Six")] *= 4.5
+            prior[CLASS_NAMES.index("You")] *= 0.05
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
 
-        # 10_Ten Single-Hand Fist: Gentle prior, only if NOT pointing forward
+        # 10_Ten Single-Hand Fist
         if g['fist'] and not is_pointing_forward:
-            prior[CLASS_NAMES.index("10_Ten")] *= 2.0
-            prior[CLASS_NAMES.index("You")] *= 0.20
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
+            if p_milk < 0.35:
+                prior[CLASS_NAMES.index("10_Ten")] *= 4.0
+                prior[CLASS_NAMES.index("Milk")] *= 0.10
+                prior[CLASS_NAMES.index("You")] *= 0.05
+                prior[CLASS_NAMES.index("Help")] *= 0.01
 
-        # ----------------- WHAT vs WATER vs 5_Five -----------------
-        # In What: Palm is facing UPWARDS (normal_y > 0.10), fingers open, chest level
-        is_palm_up = (normal_y > 0.10)
-        if is_palm_up and wrist_y > 0.38:
+        # ----------------- WHAT vs WATER -----------------
+        is_palm_up = (normal_y > 0.06)
+        if is_palm_up:
             prior[CLASS_NAMES.index("What")] *= 4.0
-            prior[CLASS_NAMES.index("Water")] *= 0.05   # Water is NEVER palm-up at chest!
-            prior[CLASS_NAMES.index("5_Five")] *= 0.30  # Asking palm is What, not number 5
+            prior[CLASS_NAMES.index("Water")] *= 0.02  # Water is NEVER palm up!
             prior[CLASS_NAMES.index("Drink")] *= 0.05
             prior[CLASS_NAMES.index("Milk")] *= 0.05
 
-        # 3_Three: Index, Middle, Ring extended, Pinky curled
-        if i and m and r and not p:
+        # 3_Three
+        if i and m and r and not p and not is_8:
             prior[CLASS_NAMES.index("3_Three")] *= 4.0
             prior[CLASS_NAMES.index("2_Two")] *= 0.05
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
-            prior[CLASS_NAMES.index("4_Four")] *= 0.25
 
-        # 4_Four: 4 fingers extended, thumb curled
+        # 4_Four
         if ext == 4 and not t:
             prior[CLASS_NAMES.index("4_Four")] *= 4.0
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
-            prior[CLASS_NAMES.index("5_Five")] *= 0.25
+            prior[CLASS_NAMES.index("5_Five")] *= 0.20
 
-        # 5_Five: All 5 fingers extended open (when NOT palm up)
-        if (g['all_five'] or (ext >= 4 and t)) and not is_palm_up:
+        # 5_Five
+        if (g['all_five'] or (ext >= 4 and t)) and not is_palm_up and p_my < 0.25 and p_milk < 0.35:
             prior[CLASS_NAMES.index("5_Five")] *= 4.0
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
 
-        # 7_Seven: Thumb + Index extended (gun / L) or thumb touching middle
-        if (t and i and not m and not r and not p) or (g['d_t_m'] < 0.25 and i and not r and not p):
-            prior[CLASS_NAMES.index("7_Seven")] *= 4.0
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
-            prior[CLASS_NAMES.index("1_One")] *= 0.20
-            prior[CLASS_NAMES.index("Go")] *= 0.20
-
-        # 9_Nine: Thumb touching index with M+R+P up, or ring+pinky
+        # 9_Nine
         if (g['d_t_i'] < 0.30 and m and r and p) or (r and p and not i and not m):
             prior[CLASS_NAMES.index("9_Nine")] *= 4.0
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.05
-            prior[CLASS_NAMES.index("6_Six")] *= 0.20
 
-    # Macro Vertical Elevation Zoning
-    if wrist_y < 0.38:
-        # Upper face / mouth: suppress waist/chest-only signs
-        for waist_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "Go", "Where", "10_Ten", "Milk", "What", "Want_Desire_Wish_For"]:
-            prior[CLASS_NAMES.index(waist_sign)] *= 0.20
-        # Gently boost mouth-level signs
-        for mouth_sign in ["Drink", "Eat", "Water", "Food"]:
-            prior[CLASS_NAMES.index(mouth_sign)] *= 1.40
+        # Want support on single hand
+        if p_want >= 0.20:
+            prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 3.0
+            prior[CLASS_NAMES.index("What")] *= 0.30
+
+        # Single-hand Milk support (only when neural net is confident and moving)
+        if p_milk >= 0.40 and not is_index_pointing and not is_2 and not is_8 and not is_7:
+            prior[CLASS_NAMES.index("Milk")] *= 3.0
+
+    # ----------------- FOOD vs EAT vs DRINK vs WATER -----------------
+    # In ISL, Eat and Food occur at chin/mouth elevation (wrist_y <= 0.56)
+    if wrist_y <= 0.56:
+        g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
+        is_pinched_mouth = (g['d_t_i'] < 0.30 and g['count_ext'] <= 1)
+        is_open_food = (g['count_ext'] >= 3 or g['d_t_i'] > 0.35)
+
+        if is_pinched_mouth or p_eat > p_food:
+            prior[CLASS_NAMES.index("Eat")] *= 3.5
+            prior[CLASS_NAMES.index("Food")] *= 0.40
+        elif is_open_food or p_food >= p_eat:
+            prior[CLASS_NAMES.index("Food")] *= 3.5
+            prior[CLASS_NAMES.index("Eat")] *= 0.40
+
+        # Suppress waist-only signs if hand is at upper face / mouth (wrist_y < 0.36)
+        if wrist_y < 0.36:
+            for waist_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "10_Ten", "Milk"]:
+                prior[CLASS_NAMES.index(waist_sign)] *= 0.20
     else:
-        # Chest / torso / waist: SUPPRESS mouth-only signs (Water, Drink, Eat)
+        # Waist / torso: suppress mouth-only signs
         for mouth_sign in ["Drink", "Eat", "Water", "Food"]:
             prior[CLASS_NAMES.index(mouth_sign)] *= 0.15
 
@@ -340,11 +401,15 @@ class RealTimeISLTranslator:
         self.prev_wrist = None
         self.prev_wrist1 = None
         self.wrist_velocity = 0.0
-        self.wild_motion_thresh = 0.095  # Filters only wild arm swings across screen
-        self.window_history = deque(maxlen=6)  # 6-frame sliding consensus window
+        self.wild_motion_thresh = 0.22  # Allows dynamic in-place signing motions (Want, Milk, Help)
+        self.window_history = deque(maxlen=7)  # 7-frame sliding consensus window
         self.required_consensus_frames = 4    # 4 agreeing frames (~0.13s) confirms sign!
         self.flash_capture_word = None
         self.flash_capture_time = 0
+
+        # Multi-digit sequential 10 tracking (1_One followed by 0 / 10_Ten)
+        self.last_digit_token = None
+        self.last_digit_time = 0
 
         # Session Recording State
         self.is_recording = False
@@ -362,16 +427,18 @@ class RealTimeISLTranslator:
             print(f"Loaded Swin-Mish Attention model from {weights_path}")
         self.model.eval()
 
-        # Initialize MediaPipe Hand Tracker (0.32 detects all numbers including 4, 9, 10)
+        # Initialize MediaPipe Hand Tracker in VIDEO mode for seamless temporal tracking across motion
         base_options = python.BaseOptions(model_asset_path=MODEL_TASK_PATH)
         options = vision.HandLandmarkerOptions(
             base_options=base_options,
             num_hands=2,
-            min_hand_detection_confidence=0.32,  # Reliably detects numbers without losing fingers
-            min_hand_presence_confidence=0.32,   # Smooth tracking through dynamic hand movement
-            min_tracking_confidence=0.30
+            running_mode=vision.RunningMode.VIDEO,
+            min_hand_detection_confidence=0.15,  # High sensitivity: tracks overlapping hands (Help) & moving fists (Milk)
+            min_hand_presence_confidence=0.15,   # Continuous smooth tracking through dynamic motion
+            min_tracking_confidence=0.15
         )
         self.detector = vision.HandLandmarker.create_from_options(options)
+        self.prev_ts_ms = 0
 
     def draw_hand_skeleton(self, frame, hand_landmarks, orig_w, orig_h):
         points = [(int(lm.x * orig_w), int(lm.y * orig_h)) for lm in hand_landmarks]
@@ -389,9 +456,11 @@ class RealTimeISLTranslator:
 
         annotated = frame.copy()
 
-        # Run MediaPipe hand detection
+        # Run MediaPipe hand detection with monotonically increasing millisecond timestamp
+        ts_ms = max(getattr(self, 'prev_ts_ms', 0) + 1, int(time.time() * 1000))
+        self.prev_ts_ms = ts_ms
         mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        res = self.detector.detect(mp_img)
+        res = self.detector.detect_for_video(mp_img, ts_ms)
 
         detected_sign = None
         confidence = 0.0
@@ -400,8 +469,8 @@ class RealTimeISLTranslator:
         valid_hands = []
         if res.hand_landmarks:
             for idx, hand in enumerate(res.hand_landmarks):
-                # 1. Ignore resting hands in lap / below screen edge
-                if hand[0].y > 0.88:
+                # 1. Ignore resting hands in lap / below screen edge (wrist off screen)
+                if hand[0].y > 0.96:
                     continue
 
                 # 2. Check physical hand biomechanics & anti-face filter
@@ -462,8 +531,8 @@ class RealTimeISLTranslator:
             second_conf = float(fused_scores[second_cls] / (np.sum(fused_scores) + 1e-6))
             margin = top_conf - second_conf
 
-            # Responsive detection threshold (adaptive for numbers)
-            active_conf_thresh = self.conf_thresh
+            # Responsive detection threshold (adaptive for motion)
+            active_conf_thresh = 0.38 if self.wrist_velocity > 0.03 else self.conf_thresh
             if top_conf >= active_conf_thresh and margin >= self.min_margin:
                 detected_sign = CLASS_NAMES[best_cls]
                 confidence = top_conf
@@ -478,27 +547,45 @@ class RealTimeISLTranslator:
 
         # ------------------- FLUID DYNAMIC & STATIC SESSION RECORDING -------------------
         if self.is_recording:
-            # Allow recognition during dynamic in-place motion (velocity <= 0.095)
-            # Only block if arm is swinging wildly across the screen (velocity > 0.095)
+            # Allow recognition during dynamic in-place motion (velocity <= 0.22)
+            # Only block if arm is swinging wildly across the screen (velocity > 0.22)
             is_motion_valid = (self.wrist_velocity <= self.wild_motion_thresh)
 
             if is_motion_valid and detected_sign:
                 self.window_history.append(detected_sign)
-                # Consensus confirmation: 4 agreeing frames in recent 6-frame window (~0.13s)
+                # Consensus confirmation: 4 agreeing frames in recent 7-frame window (~0.13s)
                 if len(self.window_history) >= self.required_consensus_frames:
                     common_sign, count = Counter(self.window_history).most_common(1)[0]
                     if count >= self.required_consensus_frames:
                         curr_t = time.time()
-                        if common_sign != self.last_confirmed_word and (curr_t - self.last_confirmed_time) > 0.65:
+                        # Sequential 10 detection: User signed 1_One, followed by 10_Ten (fist / 0) within 2.5s
+                        if common_sign == "10_Ten" and self.last_digit_token == "1_One" and (curr_t - self.last_digit_time) <= 2.5:
+                            if self.recorded_tokens and self.recorded_tokens[-1] == "1_One":
+                                self.recorded_tokens[-1] = "10_Ten"
+                            else:
+                                self.recorded_tokens.append("10_Ten")
+                            self.last_confirmed_word = "10_Ten"
+                            self.last_confirmed_time = curr_t
+                            self.last_digit_token = "10_Ten"
+                            self.last_digit_time = curr_t
+                            self.flash_capture_word = "10 Ten (1+0)"
+                            self.flash_capture_time = curr_t
+                            self.window_history.clear()
+                            print(f"  [+] Captured Sequential ISL Sign: 10_Ten (From 1 + 0 sequence)")
+                        elif common_sign != self.last_confirmed_word and (curr_t - self.last_confirmed_time) > 0.60:
                             self.recorded_tokens.append(common_sign)
                             self.last_confirmed_word = common_sign
                             self.last_confirmed_time = curr_t
+                            if common_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "10_Ten"]:
+                                self.last_digit_token = common_sign
+                                self.last_digit_time = curr_t
                             self.flash_capture_word = common_sign
                             self.flash_capture_time = curr_t
                             self.window_history.clear()
                             print(f"  [+] Captured Sign: {common_sign} (Total signs: {len(self.recorded_tokens)})")
             else:
-                if not is_motion_valid:
+                # Only clear window history if arm swings wildly across the frame
+                if self.wrist_velocity > 0.25:
                     self.window_history.clear()
 
             # Reset last_confirmed_word when hands return to neutral / leave frame
