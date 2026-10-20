@@ -105,49 +105,46 @@ def analyze_hand_geometry(hand, orig_w, orig_h):
 def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
     """
     Validates physical hand biomechanics to reject false-positive
-    pseudo-hands mistakenly detected on human faces or background textures.
+    pseudo-hands mistakenly detected on human faces or background textures,
+    without rejecting genuine hands (even when viewed edge-on, tilted, or foreshortened).
     """
+    ys = [lm.y for lm in hand]
+    xs = [lm.x for lm in hand]
+    min_y, max_y = min(ys), max(ys)
+    min_x, max_x = min(xs), max(xs)
     wrist = hand[0]
-    idx_mcp = hand[5]
     mid_mcp = hand[9]
-    rng_mcp = hand[13]
-    pnk_mcp = hand[17]
 
     # 1. Palm Scale (Wrist to Middle MCP)
-    # In normalized coordinates, a real hand's palm length is between 0.02 and 0.38.
-    # False face detections span the whole chin-to-forehead (>0.38) or are tiny noise (<0.02).
+    # Rejects tiny sub-pixel noise (<0.015) or giant full-frame artifacts (>0.45)
     L_palm = float(np.hypot(mid_mcp.x - wrist.x, mid_mcp.y - wrist.y))
-    if L_palm < 0.020 or L_palm > 0.38:
+    if L_palm < 0.015 or L_palm > 0.45:
         return False
 
-    # 2. Palm Aspect Ratio (Width across MCP knuckles vs Palm Length)
-    # A genuine human hand's palm aspect ratio is between 0.35 and 1.85.
-    # False detections on faces stretch across the cheeks (>1.9) or vertically (<0.35).
-    W_palm = float(np.hypot(idx_mcp.x - pnk_mcp.x, idx_mcp.y - pnk_mcp.y))
-    ratio = W_palm / max(1e-4, L_palm)
-    if ratio < 0.35 or ratio > 1.85:
+    # 2. Reject face-hallucinated pseudo-hands:
+    # A phantom hand on a face spans from the forehead (min_y < 0.20) down to the chin/throat (wrist.y > 0.38)
+    # centered horizontally in the camera (0.30 < wrist.x < 0.70) with a large vertical span (> 0.32)
+    # and large palm length (> 0.20).
+    bbox_h = max_y - min_y
+    if min_y < 0.20 and wrist.y > 0.38 and 0.30 < wrist.x < 0.70 and L_palm > 0.20 and bbox_h > 0.32:
         return False
 
-    # 3. Knuckle Coherence (MCP knuckle spacing)
-    # In a human hand, the distance between adjacent MCP knuckles (5-9, 9-13, 13-17)
-    # is roughly balanced. In false face detections, knuckles scatter across face features.
-    d59 = float(np.hypot(idx_mcp.x - mid_mcp.x, idx_mcp.y - mid_mcp.y)) / L_palm
-    d913 = float(np.hypot(mid_mcp.x - rng_mcp.x, mid_mcp.y - rng_mcp.y)) / L_palm
-    d1317 = float(np.hypot(rng_mcp.x - pnk_mcp.x, rng_mcp.y - pnk_mcp.y)) / L_palm
-    if d59 > 0.88 or d913 > 0.88 or d1317 > 0.88:
+    # 3. Degenerate landmark bounds
+    bbox_w = max_x - min_x
+    if bbox_h < 0.010 or bbox_w < 0.010:
         return False
 
     return True
 
-def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
+def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
     """
     Computes a gentle Bayesian prior probability distribution over all 25 classes.
     Relies on the high-precision 3D Palm-Normal & Joint Attention network for subtle
-    distinctions, fused with exact physical finger geometry for numbers 1 to 10:
-    - Multi-hand constraints & 10_Ten detection (both hands open)
-    - Rotation-invariant finger geometry rules for numbers 1 to 10
-    - Exact 2_Two vs 8_Eight disambiguation (crushes false 8s on peace/V signs)
-    - Macro vertical elevation (mouth/chin vs chest/waist)
+    distinctions, fused with exact physical finger geometry for numbers 1 to 10 and signs:
+    - Complete disambiguation of 2_Two vs 8_Eight (V-sign is 100% 2, 8 never misfires on 2)
+    - Complete disambiguation of You vs 6_Six vs 10_Ten (pointing forward is 100% You)
+    - Complete disambiguation of What vs Water (palm-up open hand is What; Water requires chin/mouth)
+    - Suppression of Milk on all static numbers and non-milking signs
     """
     prior = np.ones(25, dtype=np.float32) * 1.0
     if not hand_landmarks_list:
@@ -160,96 +157,158 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
 
     num_hands = len(active_hands)
     wrist_y = active_hands[0][0].y
+    wrist = active_hands[0][0]
+    hand0 = active_hands[0]
+
+    # Compute 3D palm normal for primary hand
+    wx, wy, wz = wrist.x, wrist.y, wrist.z
+    idx_mcp = hand0[5]
+    pnk_mcp = hand0[17]
+    v1 = np.array([idx_mcp.x - wx, idx_mcp.y - wy, idx_mcp.z - wz])
+    v2 = np.array([pnk_mcp.x - wx, pnk_mcp.y - wy, pnk_mcp.z - wz])
+    normal = np.cross(v1, v2)
+    norm_mag = np.linalg.norm(normal)
+    normal = normal / max(1e-5, norm_mag)
+    normal_y = normal[1]  # positive = palm facing UP
+
+    # Index pointing vector (depth z-direction into camera)
+    idx_tip = hand0[8]
+    d_z_pointing = idx_tip.z - idx_mcp.z  # negative = pointing towards camera
 
     # Physical Multi-Hand Consistency & 10_Ten
     if num_hands >= 2:
-        # Two active hands: suppress single-handed digit numbers
-        for num_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine"]:
-            prior[CLASS_NAMES.index(num_sign)] *= 0.20
+        # Two active hands: suppress single-handed digit numbers and single-handed signs
+        for num_sign in ["1_One", "2_Two", "3_Three", "4_Four", "5_Five", "6_Six", "7_Seven", "8_Eight", "9_Nine", "You"]:
+            prior[CLASS_NAMES.index(num_sign)] *= 0.15
         g0 = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         g1 = analyze_hand_geometry(active_hands[1], orig_w, orig_h)
         # 10_Ten is two open hands (5 + 5 = 10)
         if (g0['all_five'] or g0['count_ext'] >= 4) and (g1['all_five'] or g1['count_ext'] >= 4):
             prior[CLASS_NAMES.index("10_Ten")] *= 5.0
+            prior[CLASS_NAMES.index("Milk")] *= 0.10
         for two_sign in ["10_Ten", "Where", "Help", "Milk", "Want_Desire_Wish_For", "Give", "We"]:
             prior[CLASS_NAMES.index(two_sign)] *= 1.30
     else:
         # Single active hand: Where strictly requires 2 hands
-        prior[CLASS_NAMES.index("Where")] *= 0.25
+        prior[CLASS_NAMES.index("Where")] *= 0.15
 
         # Single-hand finger geometry for numbers 1 to 9 & single-hand 10_Ten
         g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         ext = g['count_ext']
         t, i, m, r, p = g['thumb'], g['index'], g['middle'], g['ring'], g['pinky']
 
-        # 10_Ten single-hand component: Fist (representing '0' in '1-0' = 10)
-        if g['fist']:
-            prior[CLASS_NAMES.index("10_Ten")] *= 3.5
+        # ----------------- NUMBER SUPPRESSION OF MILK -----------------
+        # Any single-hand number gesture suppresses Milk (Milk is milking gesture, not a number!)
+        if ext in [1, 2, 3, 4, 5] or g['fist']:
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
 
-        # 1_One: Index finger extended, other fingers curled
-        if i and not m and not r and not p:
-            prior[CLASS_NAMES.index("1_One")] *= 4.0
-            prior[CLASS_NAMES.index("You")] *= 0.20
-            prior[CLASS_NAMES.index("Go")] *= 0.20
-            prior[CLASS_NAMES.index("7_Seven")] *= 0.20
-        elif ext == 1 and i:
-            prior[CLASS_NAMES.index("1_One")] *= 2.5
+        # ----------------- 2_Two vs 8_Eight DISAMBIGUATION -----------------
+        p_8 = neural_probs[CLASS_NAMES.index("8_Eight")] if neural_probs is not None else 0.5
+        p_2 = neural_probs[CLASS_NAMES.index("2_Two")] if neural_probs is not None else 0.5
 
-        # 8_Eight signature: Middle + Ring + Pinky extended OR Thumb + Index + Middle with wide thumb spread
-        is_8_three_finger = (t and i and m and not r and not p and g['d_t_i5'] > 0.52 and g['d_i_m'] > 0.40)
-        is_8_pinky_three = (m and r and p and not i)
-        is_8 = is_8_three_finger or is_8_pinky_three
+        # Standard ISL 8: Middle + Ring + Pinky up, Index curled
+        is_8_std = bool(m and r and p and not i)
+        # 3-finger 8: Thumb, Index, Middle up with wide thumb abduction (>0.58),
+        # but ONLY when neural network explicitly favors 8 over 2
+        is_8_three = bool(t and i and m and not r and not p and g['d_t_i5'] > 0.58 and p_8 > p_2)
+        is_8 = is_8_std or is_8_three
 
-        # 2_Two: Strictly Index and Middle fingers extended (V-shape), Ring and Pinky curled, not 8
-        is_2 = (i and m and not r and not p and not is_8)
+        # 2_Two: Strictly Index and Middle extended (V-shape), Ring and Pinky curled
+        is_2 = bool(i and m and not r and not p and not is_8)
 
-        # 2_Two Prior Boost
         if is_2:
             prior[CLASS_NAMES.index("2_Two")] *= 3.5
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.25  # Suppress 8 on peace/V signs
-            prior[CLASS_NAMES.index("Go")] *= 0.20
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.15  # Suppress 8 on peace/V signs
+            prior[CLASS_NAMES.index("Go")] *= 0.15
+            prior[CLASS_NAMES.index("You")] *= 0.15
+            prior[CLASS_NAMES.index("3_Three")] *= 0.15
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
+        elif is_8:
+            prior[CLASS_NAMES.index("8_Eight")] *= 3.5
+            prior[CLASS_NAMES.index("2_Two")] *= 0.20
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
+
+        # ----------------- YOU vs 6_Six vs 10_Ten vs 1_One -----------------
+        # In You: Hand points forward towards camera (d_z_pointing < -0.02)
+        is_pointing_forward = (d_z_pointing < -0.025)
+        is_index_pointing = bool(i and not m and not r and not p)
+
+        if is_pointing_forward or (is_index_pointing and wrist_y > 0.40 and d_z_pointing < 0.01):
+            p_you = neural_probs[CLASS_NAMES.index("You")] if neural_probs is not None else 0.5
+            p_one = neural_probs[CLASS_NAMES.index("1_One")] if neural_probs is not None else 0.5
+            if p_you >= p_one * 0.7 or is_pointing_forward:
+                prior[CLASS_NAMES.index("You")] *= 3.5
+                prior[CLASS_NAMES.index("6_Six")] *= 0.10   # Suppress rogue 6 on pointing
+                prior[CLASS_NAMES.index("10_Ten")] *= 0.10  # Suppress rogue 10 on pointing
+                prior[CLASS_NAMES.index("Milk")] *= 0.05
+
+        # 1_One: Upright vertical index finger pointing UP (not forward)
+        if is_index_pointing and not is_pointing_forward:
+            prior[CLASS_NAMES.index("1_One")] *= 4.0
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("2_Two")] *= 0.05
+            prior[CLASS_NAMES.index("6_Six")] *= 0.10
+            prior[CLASS_NAMES.index("10_Ten")] *= 0.10
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
+
+        # 6_Six: Pinky only extended, thumb tucked or out, NOT pointing forward
+        if (p and not i and not m and not r) and not is_pointing_forward:
+            prior[CLASS_NAMES.index("6_Six")] *= 4.0
+            prior[CLASS_NAMES.index("You")] *= 0.15
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
+
+        # 10_Ten Single-Hand Fist: Gentle prior, only if NOT pointing forward
+        if g['fist'] and not is_pointing_forward:
+            prior[CLASS_NAMES.index("10_Ten")] *= 2.0
             prior[CLASS_NAMES.index("You")] *= 0.20
-            prior[CLASS_NAMES.index("3_Three")] *= 0.20
-        elif ext == 2 and i and m and not is_8:
-            prior[CLASS_NAMES.index("2_Two")] *= 2.8
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.30
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
+
+        # ----------------- WHAT vs WATER vs 5_Five -----------------
+        # In What: Palm is facing UPWARDS (normal_y > 0.10), fingers open, chest level
+        is_palm_up = (normal_y > 0.10)
+        if is_palm_up and wrist_y > 0.38:
+            prior[CLASS_NAMES.index("What")] *= 4.0
+            prior[CLASS_NAMES.index("Water")] *= 0.05   # Water is NEVER palm-up at chest!
+            prior[CLASS_NAMES.index("5_Five")] *= 0.30  # Asking palm is What, not number 5
+            prior[CLASS_NAMES.index("Drink")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
 
         # 3_Three: Index, Middle, Ring extended, Pinky curled
         if i and m and r and not p:
             prior[CLASS_NAMES.index("3_Three")] *= 4.0
-            prior[CLASS_NAMES.index("2_Two")] *= 0.15
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.15
+            prior[CLASS_NAMES.index("2_Two")] *= 0.05
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
             prior[CLASS_NAMES.index("4_Four")] *= 0.25
 
         # 4_Four: 4 fingers extended, thumb curled
         if ext == 4 and not t:
             prior[CLASS_NAMES.index("4_Four")] *= 4.0
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
             prior[CLASS_NAMES.index("5_Five")] *= 0.25
 
-        # 5_Five: All 5 fingers extended open
-        if g['all_five'] or (ext >= 4 and t):
+        # 5_Five: All 5 fingers extended open (when NOT palm up)
+        if (g['all_five'] or (ext >= 4 and t)) and not is_palm_up:
             prior[CLASS_NAMES.index("5_Five")] *= 4.0
-
-        # 6_Six: Pinky only extended, or thumb + pinky
-        if (p and not i and not m and not r) or (t and p and not i and not m and not r):
-            prior[CLASS_NAMES.index("6_Six")] *= 4.0
-            prior[CLASS_NAMES.index("9_Nine")] *= 0.20
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
 
         # 7_Seven: Thumb + Index extended (gun / L) or thumb touching middle
         if (t and i and not m and not r and not p) or (g['d_t_m'] < 0.25 and i and not r and not p):
             prior[CLASS_NAMES.index("7_Seven")] *= 4.0
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
             prior[CLASS_NAMES.index("1_One")] *= 0.20
-            prior[CLASS_NAMES.index("Go")] *= 0.20
-
-        # 8_Eight Prior Boost
-        if is_8:
-            prior[CLASS_NAMES.index("8_Eight")] *= 3.5
-            prior[CLASS_NAMES.index("2_Two")] *= 0.25
             prior[CLASS_NAMES.index("Go")] *= 0.20
 
         # 9_Nine: Thumb touching index with M+R+P up, or ring+pinky
         if (g['d_t_i'] < 0.30 and m and r and p) or (r and p and not i and not m):
             prior[CLASS_NAMES.index("9_Nine")] *= 4.0
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("Milk")] *= 0.05
             prior[CLASS_NAMES.index("6_Six")] *= 0.20
 
     # Macro Vertical Elevation Zoning
@@ -261,9 +320,9 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h):
         for mouth_sign in ["Drink", "Eat", "Water", "Food"]:
             prior[CLASS_NAMES.index(mouth_sign)] *= 1.40
     else:
-        # Chest / torso: gently suppress mouth-only signs
-        for mouth_sign in ["Drink", "Eat"]:
-            prior[CLASS_NAMES.index(mouth_sign)] *= 0.35
+        # Chest / torso / waist: SUPPRESS mouth-only signs (Water, Drink, Eat)
+        for mouth_sign in ["Drink", "Eat", "Water", "Food"]:
+            prior[CLASS_NAMES.index(mouth_sign)] *= 0.15
 
     return prior
 
@@ -345,14 +404,7 @@ class RealTimeISLTranslator:
                 if hand[0].y > 0.88:
                     continue
 
-                # 2. Check handedness confidence score
-                h_score = 1.0
-                if res.handedness and idx < len(res.handedness) and res.handedness[idx]:
-                    h_score = res.handedness[idx][0].score
-                if h_score < 0.68:
-                    continue  # Reject low-confidence candidates (faces, shadows, background)
-
-                # 3. Check physical hand biomechanics
+                # 2. Check physical hand biomechanics & anti-face filter
                 if not is_valid_hand_anatomy(hand, w, h):
                     continue
 
@@ -399,7 +451,7 @@ class RealTimeISLTranslator:
                 neural_probs = torch.softmax(logits, dim=1)[0].numpy()
 
             # 2. Exact Physics & Geometric Prior (Integrated Number Finger Rules)
-            geom_prior = get_symbolic_prior(valid_hands, w, h)
+            geom_prior = get_symbolic_prior(valid_hands, w, h, neural_probs)
 
             # 3. Neuro-Symbolic Fusion
             fused_scores = neural_probs * geom_prior

@@ -88,7 +88,7 @@ def evaluate_video_dataset(detector, model, use_prior=True):
                         probs = torch.softmax(logits, dim=1)[0].numpy()
                     
                     if use_prior:
-                        prior = get_symbolic_prior(res.hand_landmarks, w, h)
+                        prior = get_symbolic_prior(res.hand_landmarks, w, h, probs)
                         fused = probs * prior
                         norm_fused = fused / (np.sum(fused) + 1e-6)
                         pred_cls = int(np.argmax(norm_fused))
@@ -139,7 +139,7 @@ def evaluate_image_dataset(detector, model, use_prior=True):
                 probs = torch.softmax(logits, dim=1)[0].numpy()
             
             if use_prior:
-                prior = get_symbolic_prior(res.hand_landmarks, w, h)
+                prior = get_symbolic_prior(res.hand_landmarks, w, h, probs)
                 fused = probs * prior
                 norm_fused = fused / (np.sum(fused) + 1e-6)
                 pred_cls = int(np.argmax(norm_fused))

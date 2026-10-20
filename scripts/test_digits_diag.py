@@ -48,7 +48,7 @@ def evaluate_all_numbers():
             feats = extract_advanced_gesture_features(res.hand_landmarks, w, h)
             with torch.no_grad():
                 probs = torch.softmax(model(torch.tensor(feats, dtype=torch.float32).unsqueeze(0)), dim=1)[0].numpy()
-            prior = get_symbolic_prior(res.hand_landmarks, w, h)
+            prior = get_symbolic_prior(res.hand_landmarks, w, h, probs)
             fused = probs * prior
             best = CLASS_NAMES[int(np.argmax(fused))]
             if best == num:
