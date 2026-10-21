@@ -102,7 +102,7 @@ def analyze_hand_geometry(hand, orig_w, orig_h):
         'd_i_m': d_i_m
     }
 
-def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
+def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720, world_hand=None, handedness_score=1.0):
     """
     Validates physical hand biomechanics to reject false-positive
     pseudo-hands mistakenly detected on human faces or background textures,
@@ -118,9 +118,9 @@ def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
     pnk_mcp = hand[17]
 
     # 1. Palm Scale (Wrist to Middle MCP)
-    # In normalized webcam framing, genuine human hand palms never exceed 0.28 screen height.
+    # In normalized webcam framing, genuine human hand palms never exceed 0.22 screen height.
     L_palm = float(np.hypot(mid_mcp.x - wrist.x, mid_mcp.y - wrist.y))
-    if L_palm < 0.015 or L_palm > 0.28:
+    if L_palm < 0.015 or L_palm > 0.22:
         return False
 
     bbox_h = max_y - min_y
@@ -128,24 +128,42 @@ def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
     if bbox_h < 0.010 or bbox_w < 0.010:
         return False
 
-    # 2. Multi-Tier Anti-Face Defense:
+    # 2. 3D World Coordinate Metric Palm Length (meters)
+    # MediaPipe hand_world_landmarks provides real-world 3D metric coordinates centered at wrist.
+    # A genuine human hand palm (wrist to middle MCP) is 3.5cm to 15.5cm (0.035m - 0.155m).
+    # Face-spanning phantom detections span > 0.16m (matching human skull size ~ 20-24cm).
+    if world_hand is not None and len(world_hand) >= 10:
+        w_wrist = world_hand[0]
+        w_mid_mcp = world_hand[9]
+        L_world = float(np.sqrt((w_mid_mcp.x - w_wrist.x)**2 + 
+                                (w_mid_mcp.y - w_wrist.y)**2 + 
+                                (w_mid_mcp.z - w_wrist.z)**2))
+        if L_world < 0.035 or L_world > 0.155:
+            return False
+
+    # 3. Multi-Tier Anti-Face Defense:
     # A pseudo-hand hallucinated on a human face has distinct anatomical hallmarks:
     # It is located in the upper-central region (head/face area) spanning from forehead/eyes to chin/throat,
     # with an unnaturally large vertical span matching head dimensions rather than hand dimensions.
-    is_in_face_zone = (0.22 < wrist.x < 0.78) and (wrist.y < 0.58)
+    is_in_face_zone = (0.22 < wrist.x < 0.78) and (wrist.y < 0.50)
 
-    # Tier A: Large face-spanning phantom hand (chin to forehead)
-    if is_in_face_zone and L_palm > 0.17 and bbox_h > 0.26 and min_y < 0.28:
-        return False
+    if is_in_face_zone:
+        # Tier A: MediaPipe handedness confidence is low (< 0.60) on facial features
+        if handedness_score < 0.60:
+            return False
 
-    # Tier B: Forehead-to-chin phantom (wrist near throat/chin with tips in forehead/hair)
-    if is_in_face_zone and min_y < 0.18 and wrist.y > 0.36 and L_palm > 0.15:
-        return False
+        # Tier B: Large face-spanning phantom hand (chin to forehead)
+        if bbox_h > 0.23 or L_palm > 0.13:
+            return False
 
-    # Tier C: Unnatural MCP knuckle spread across cheeks/ears
-    W_palm = float(np.hypot(idx_mcp.x - pnk_mcp.x, idx_mcp.y - pnk_mcp.y))
-    if W_palm > 0.25 and is_in_face_zone:
-        return False
+        # Tier C: Unnatural MCP knuckle spread across cheeks/ears
+        W_palm = float(np.hypot(idx_mcp.x - pnk_mcp.x, idx_mcp.y - pnk_mcp.y))
+        if W_palm > 0.16:
+            return False
+
+        # Tier D: Forehead-to-chin phantom (wrist near throat/chin with tips in forehead/hair)
+        if min_y < 0.18 and wrist.y > 0.35 and L_palm > 0.12:
+            return False
 
     return True
 
@@ -214,8 +232,15 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         if is_ten_two_hands and p_milk < 0.35 and p_want < 0.35:
             prior[CLASS_NAMES.index("10_Ten")] *= 5.0
 
-        for two_sign in ["Where", "Give", "We"]:
+        for two_sign in ["Give", "We"]:
             prior[CLASS_NAMES.index(two_sign)] *= 1.30
+
+        # Where strictly requires two open hands facing UP with fingers spread
+        is_where_open = (g0['count_ext'] >= 3 or g0['all_five']) and (g1['count_ext'] >= 3 or g1['all_five'])
+        if is_where_open and not g0['fist'] and not g1['fist']:
+            prior[CLASS_NAMES.index("Where")] *= 2.0
+        else:
+            prior[CLASS_NAMES.index("Where")] *= 0.005
 
         # Help vs Milk Disambiguation in 2-handed mode:
         # Help: One hand forms a flat base tray (normal_y > 0.02 or ext >= 3),
@@ -225,19 +250,21 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         wrists_dist = np.hypot(active_hands[0][0].x - active_hands[1][0].x, active_hands[0][0].y - active_hands[1][0].y)
 
         if (has_flat_base and has_fist_hand and wrists_dist < 0.32) or p_help >= 0.25:
-            prior[CLASS_NAMES.index("Help")] *= 4.5
-            prior[CLASS_NAMES.index("Milk")] *= 0.02
+            prior[CLASS_NAMES.index("Help")] *= 5.0
+            prior[CLASS_NAMES.index("Milk")] *= 0.01
+            prior[CLASS_NAMES.index("Where")] *= 0.001
         elif (g0['fist'] and g1['fist']) or (g0['count_ext'] <= 2 and g1['count_ext'] <= 2):
             # Both hands are fists / milking squeeze motion
             prior[CLASS_NAMES.index("Milk")] *= 4.0
             prior[CLASS_NAMES.index("Help")] *= 0.05
+            prior[CLASS_NAMES.index("Where")] *= 0.001
         else:
             if p_help > p_milk:
-                prior[CLASS_NAMES.index("Help")] *= 2.5
-                prior[CLASS_NAMES.index("Milk")] *= 0.20
+                prior[CLASS_NAMES.index("Help")] *= 3.0
+                prior[CLASS_NAMES.index("Milk")] *= 0.15
             else:
-                prior[CLASS_NAMES.index("Milk")] *= 2.5
-                prior[CLASS_NAMES.index("Help")] *= 0.20
+                prior[CLASS_NAMES.index("Milk")] *= 3.0
+                prior[CLASS_NAMES.index("Help")] *= 0.15
 
         # Want vs What in 2-handed mode:
         # Want: Two hands pulling towards torso, cupped / palms up
@@ -246,7 +273,7 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             prior[CLASS_NAMES.index("What")] *= 0.15
     else:
         # Single active hand: Where strictly requires 2 hands
-        prior[CLASS_NAMES.index("Where")] *= 0.05
+        prior[CLASS_NAMES.index("Where")] *= 0.001
 
         g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         ext = g['count_ext']
@@ -257,8 +284,20 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         # Pointing to chest (I_Me)
         is_pointing_to_chest = (is_index_pointing and d_z_pointing > 0.008 and wrist_y > 0.35)
 
-        # Help on single hand: A single pointing finger or isolated number is NEVER Help!
-        if is_index_pointing or ext in [1, 2, 3, 4, 5]:
+        # ----------------- Help Disambiguation on Single Hand -----------------
+        # In ISL "Help", one hand (fist with thumb UP) rests on top of the other.
+        # Often the bottom hand is occluded or resting below, so only the top fist is detected.
+        # Top hand signature: thumb extended pointing UP, other 4 fingers folded (fist).
+        is_thumb_up = bool(t and (hand0[4].y < hand0[5].y - 0.02) and ext <= 1 and not is_index_pointing)
+        if is_thumb_up or (p_help >= 0.20 and ext <= 1 and not is_index_pointing and not is_pointing_forward):
+            prior[CLASS_NAMES.index("Help")] *= 5.0
+            prior[CLASS_NAMES.index("Milk")] *= 0.01   # Milk squeezes fingers, thumb folded, never upright thumbs-up!
+            prior[CLASS_NAMES.index("Where")] *= 0.001 # Where requires 2 open palms
+            prior[CLASS_NAMES.index("10_Ten")] *= 0.05
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.02
+            prior[CLASS_NAMES.index("You")] *= 0.02
+        elif is_index_pointing or ext in [2, 3, 4, 5]:
+            # Single pointing finger or isolated number is NEVER Help!
             prior[CLASS_NAMES.index("Help")] *= 0.01
 
         # ----------------- I_Me vs My DISAMBIGUATION -----------------
@@ -329,8 +368,8 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
 
         # 10_Ten Single-Hand Fist
-        if g['fist'] and not is_pointing_forward:
-            if p_milk < 0.35:
+        if g['fist'] and not is_pointing_forward and not is_thumb_up:
+            if p_milk < 0.35 and p_help < 0.25:
                 prior[CLASS_NAMES.index("10_Ten")] *= 4.0
                 prior[CLASS_NAMES.index("Milk")] *= 0.10
                 prior[CLASS_NAMES.index("You")] *= 0.05
@@ -371,8 +410,8 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 3.0
             prior[CLASS_NAMES.index("What")] *= 0.30
 
-        # Single-hand Milk support (only when neural net is confident and moving)
-        if p_milk >= 0.40 and not is_index_pointing and not is_2 and not is_8 and not is_7:
+        # Single-hand Milk support (only when neural net is confident, moving, and not a Help thumbs-up)
+        if p_milk >= 0.40 and not is_index_pointing and not is_2 and not is_8 and not is_7 and not is_thumb_up:
             prior[CLASS_NAMES.index("Milk")] *= 3.0
 
     # ----------------- FOOD vs EAT vs DRINK vs WATER -----------------
@@ -446,9 +485,9 @@ class RealTimeISLTranslator:
             base_options=base_options,
             num_hands=2,
             running_mode=vision.RunningMode.VIDEO,
-            min_hand_detection_confidence=0.20,  # Robust sensitivity: rejects face false-positives while tracking hands
-            min_hand_presence_confidence=0.20,   # Continuous smooth tracking through dynamic motion
-            min_tracking_confidence=0.20
+            min_hand_detection_confidence=0.28,  # Robust sensitivity: rejects face false-positives while tracking hands
+            min_hand_presence_confidence=0.25,   # Continuous smooth tracking through dynamic motion
+            min_tracking_confidence=0.25
         )
         self.detector = vision.HandLandmarker.create_from_options(options)
         self.prev_ts_ms = 0
@@ -486,8 +525,11 @@ class RealTimeISLTranslator:
                 if hand[0].y > 0.96:
                     continue
 
+                world_hand = res.hand_world_landmarks[idx] if getattr(res, 'hand_world_landmarks', None) and idx < len(res.hand_world_landmarks) else None
+                score = res.handedness[idx][0].score if getattr(res, 'handedness', None) and idx < len(res.handedness) and res.handedness[idx] else 1.0
+
                 # 2. Check physical hand biomechanics & anti-face filter
-                if not is_valid_hand_anatomy(hand, w, h):
+                if not is_valid_hand_anatomy(hand, w, h, world_hand=world_hand, handedness_score=score):
                     continue
 
                 valid_hands.append(hand)

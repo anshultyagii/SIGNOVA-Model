@@ -154,8 +154,8 @@ def load_models():
     options = vision.HandLandmarkerOptions(
         base_options=base_options,
         num_hands=2,
-        min_hand_detection_confidence=0.35,
-        min_hand_presence_confidence=0.35
+        min_hand_detection_confidence=0.28,
+        min_hand_presence_confidence=0.25
     )
     detector = vision.HandLandmarker.create_from_options(options)
 
@@ -264,9 +264,14 @@ with tab_live:
                         is_hand_still = False
                         valid_hands = []
                         if res.hand_landmarks:
-                            for hand in res.hand_landmarks:
-                                if hand[0].y <= 0.96 and is_valid_hand_anatomy(hand, w, h):
-                                    valid_hands.append(hand)
+                            for idx, hand in enumerate(res.hand_landmarks):
+                                if hand[0].y > 0.96:
+                                    continue
+                                world_hand = res.hand_world_landmarks[idx] if getattr(res, 'hand_world_landmarks', None) and idx < len(res.hand_world_landmarks) else None
+                                score = res.handedness[idx][0].score if getattr(res, 'handedness', None) and idx < len(res.handedness) and res.handedness[idx] else 1.0
+                                if not is_valid_hand_anatomy(hand, w, h, world_hand=world_hand, handedness_score=score):
+                                    continue
+                                valid_hands.append(hand)
 
                         if valid_hands:
                             curr_wrist = (valid_hands[0][0].x, valid_hands[0][0].y)
