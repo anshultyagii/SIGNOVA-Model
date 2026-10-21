@@ -23,7 +23,7 @@ from mediapipe.tasks.python import vision
 from scripts.sign_nlp_sentence_generator import SignLanguageNLP, TOKEN_MAP
 from models.hand_feature_extractor import extract_advanced_gesture_features
 from scripts.train_advanced_classifier import SwinMishAttentionNet, CLASS_NAMES
-from scripts.realtime_isl_translator import analyze_hand_geometry, get_symbolic_prior, HAND_CONNECTIONS
+from scripts.realtime_isl_translator import analyze_hand_geometry, get_symbolic_prior, is_valid_hand_anatomy, HAND_CONNECTIONS
 
 # Page Configuration
 st.set_page_config(
@@ -262,20 +262,26 @@ with tab_live:
 
                         # Motion velocity gating (ignores rapid hand transit between gestures)
                         is_hand_still = False
+                        valid_hands = []
                         if res.hand_landmarks:
-                            curr_wrist = (res.hand_landmarks[0][0].x, res.hand_landmarks[0][0].y)
+                            for hand in res.hand_landmarks:
+                                if hand[0].y <= 0.96 and is_valid_hand_anatomy(hand, w, h):
+                                    valid_hands.append(hand)
+
+                        if valid_hands:
+                            curr_wrist = (valid_hands[0][0].x, valid_hands[0][0].y)
                             if prev_wrist is not None:
                                 wrist_vel = float(np.hypot(curr_wrist[0] - prev_wrist[0], curr_wrist[1] - prev_wrist[1]))
                             else:
                                 wrist_vel = 0.0
                             prev_wrist = curr_wrist
-                            is_hand_still = (wrist_vel <= 0.024)
+                            is_hand_still = (wrist_vel <= 0.095)
                         else:
                             prev_wrist = None
 
-                        if res.hand_landmarks:
+                        if valid_hands:
                             all_x, all_y = [], []
-                            for hand in res.hand_landmarks:
+                            for hand in valid_hands:
                                 draw_skeleton(frame, hand, w, h)
                                 for lm in hand:
                                     all_x.append(lm.x * w)
@@ -290,14 +296,14 @@ with tab_live:
                                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 128), 2)
 
                             # Feature extraction
-                            feats = extract_advanced_gesture_features(res.hand_landmarks, w, h)
+                            feats = extract_advanced_gesture_features(valid_hands, w, h)
                             feat_tensor = torch.tensor(feats, dtype=torch.float32).unsqueeze(0)
 
                             with torch.no_grad():
                                 logits = model(feat_tensor)
                                 neural_probs = torch.softmax(logits, dim=1)[0].numpy()
 
-                            geom_prior = get_symbolic_prior(res.hand_landmarks, w, h)
+                            geom_prior = get_symbolic_prior(valid_hands, w, h, neural_probs)
                             fused_scores = neural_probs * geom_prior
                             sorted_idx = np.argsort(fused_scores)
                             best_cls = int(sorted_idx[-1])
@@ -306,7 +312,7 @@ with tab_live:
                             sec_conf = float(fused_scores[sec_cls] / (np.sum(fused_scores) + 1e-6))
                             margin = top_conf - sec_conf
 
-                            if top_conf >= conf_threshold and margin >= 0.14:
+                            if top_conf >= conf_threshold and margin >= 0.10:
                                 detected_sign = CLASS_NAMES[best_cls]
                                 confidence = top_conf
                                 

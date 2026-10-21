@@ -113,25 +113,38 @@ def is_valid_hand_anatomy(hand, orig_w=1280, orig_h=720):
     min_y, max_y = min(ys), max(ys)
     min_x, max_x = min(xs), max(xs)
     wrist = hand[0]
+    idx_mcp = hand[5]
     mid_mcp = hand[9]
+    pnk_mcp = hand[17]
 
     # 1. Palm Scale (Wrist to Middle MCP)
-    # Rejects tiny sub-pixel noise (<0.015) or giant full-frame artifacts (>0.45)
+    # In normalized webcam framing, genuine human hand palms never exceed 0.28 screen height.
     L_palm = float(np.hypot(mid_mcp.x - wrist.x, mid_mcp.y - wrist.y))
-    if L_palm < 0.015 or L_palm > 0.45:
+    if L_palm < 0.015 or L_palm > 0.28:
         return False
 
-    # 2. Reject face-hallucinated pseudo-hands:
-    # A phantom hand on a face spans from the forehead (min_y < 0.20) down to the chin/throat (wrist.y > 0.38)
-    # centered horizontally in the camera (0.30 < wrist.x < 0.70) with a large vertical span (> 0.32)
-    # and large palm length (> 0.20).
     bbox_h = max_y - min_y
-    if min_y < 0.20 and wrist.y > 0.38 and 0.30 < wrist.x < 0.70 and L_palm > 0.20 and bbox_h > 0.32:
-        return False
-
-    # 3. Degenerate landmark bounds
     bbox_w = max_x - min_x
     if bbox_h < 0.010 or bbox_w < 0.010:
+        return False
+
+    # 2. Multi-Tier Anti-Face Defense:
+    # A pseudo-hand hallucinated on a human face has distinct anatomical hallmarks:
+    # It is located in the upper-central region (head/face area) spanning from forehead/eyes to chin/throat,
+    # with an unnaturally large vertical span matching head dimensions rather than hand dimensions.
+    is_in_face_zone = (0.22 < wrist.x < 0.78) and (wrist.y < 0.58)
+
+    # Tier A: Large face-spanning phantom hand (chin to forehead)
+    if is_in_face_zone and L_palm > 0.17 and bbox_h > 0.26 and min_y < 0.28:
+        return False
+
+    # Tier B: Forehead-to-chin phantom (wrist near throat/chin with tips in forehead/hair)
+    if is_in_face_zone and min_y < 0.18 and wrist.y > 0.36 and L_palm > 0.15:
+        return False
+
+    # Tier C: Unnatural MCP knuckle spread across cheeks/ears
+    W_palm = float(np.hypot(idx_mcp.x - pnk_mcp.x, idx_mcp.y - pnk_mcp.y))
+    if W_palm > 0.25 and is_in_face_zone:
         return False
 
     return True
@@ -433,9 +446,9 @@ class RealTimeISLTranslator:
             base_options=base_options,
             num_hands=2,
             running_mode=vision.RunningMode.VIDEO,
-            min_hand_detection_confidence=0.15,  # High sensitivity: tracks overlapping hands (Help) & moving fists (Milk)
-            min_hand_presence_confidence=0.15,   # Continuous smooth tracking through dynamic motion
-            min_tracking_confidence=0.15
+            min_hand_detection_confidence=0.20,  # Robust sensitivity: rejects face false-positives while tracking hands
+            min_hand_presence_confidence=0.20,   # Continuous smooth tracking through dynamic motion
+            min_tracking_confidence=0.20
         )
         self.detector = vision.HandLandmarker.create_from_options(options)
         self.prev_ts_ms = 0
