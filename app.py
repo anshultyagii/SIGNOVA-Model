@@ -237,8 +237,8 @@ with tab_live:
             else:
                 last_word = None
                 prev_wrist = None
-                hold_count = 0
-                candidate_sign = None
+                window_history = deque(maxlen=7)
+                no_hand_frames = 0
 
                 try:
                     while run_camera:
@@ -280,7 +280,7 @@ with tab_live:
                             else:
                                 wrist_vel = 0.0
                             prev_wrist = curr_wrist
-                            is_hand_still = (wrist_vel <= 0.095)
+                            is_hand_still = (wrist_vel <= 0.22)
                         else:
                             prev_wrist = None
 
@@ -331,31 +331,28 @@ with tab_live:
 
                         fps = 1.0 / max(1e-5, (time.time() - start_t))
 
-                        # Anti-spurious hold-to-confirm logic
-                        if is_hand_still and detected_sign:
-                            if detected_sign == candidate_sign:
-                                hold_count += 1
-                            else:
-                                candidate_sign = detected_sign
-                                hold_count = 1
-
-                            if hold_count >= 7:
-                                if candidate_sign != last_word:
-                                    st.session_state['confirmed_words'].append(candidate_sign)
-                                    last_word = candidate_sign
+                        # Responsive Dynamic & Static Consensus Logic (Fluid recognition for both moving & static signs)
+                        if detected_sign and (wrist_vel <= 0.22):
+                            window_history.append(detected_sign)
+                            if len(window_history) >= 4:
+                                common_sign, count = Counter(window_history).most_common(1)[0]
+                                if count >= 4 and common_sign != last_word:
+                                    st.session_state['confirmed_words'].append(common_sign)
+                                    last_word = common_sign
                                     st.session_state['current_sentence'] = nlp.generate_sentence(st.session_state['confirmed_words'])
                                     if voice_tts:
                                         nlp.speak(st.session_state['current_sentence'])
-                                hold_count = 0
+                                    window_history.clear()
+                        elif wrist_vel > 0.25:
+                            window_history.clear()
+
+                        if not valid_hands:
+                            no_hand_frames += 1
+                            if no_hand_frames > 6:
+                                last_word = None
+                                window_history.clear()
                         else:
-                            if not is_hand_still:
-                                hold_count = max(0, hold_count - 2)
-
-                        if not res.hand_landmarks:
-                            last_word = None
-                            candidate_sign = None
-                            hold_count = 0
-
+                            no_hand_frames = 0
                         # Update UI elements
                         curr_sent = st.session_state['current_sentence']
                         sentence_placeholder.markdown(f"""

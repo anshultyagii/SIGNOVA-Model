@@ -419,16 +419,21 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             prior[CLASS_NAMES.index("2_Two")] *= 0.05
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
 
-        # 4_Four
-        if ext == 4 and not t:
+        # ----------------- 4_Four vs 5_Five DISAMBIGUATION -----------------
+        p_4 = neural_probs[CLASS_NAMES.index("4_Four")] if neural_probs is not None else 0.5
+        p_5 = neural_probs[CLASS_NAMES.index("5_Five")] if neural_probs is not None else 0.5
+
+        # 4_Four: 4 fingers extended, thumb tucked
+        if ext == 4 and not t and p_4 >= p_5:
             prior[CLASS_NAMES.index("4_Four")] *= 4.0
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
             prior[CLASS_NAMES.index("5_Five")] *= 0.20
 
-        # 5_Five
-        if (g['all_five'] or (ext >= 4 and t)) and not is_palm_up and p_my < 0.25 and p_milk < 0.35:
+        # 5_Five: all 5 fingers open, or 4 fingers extended with thumb or p_5 > p_4
+        if (g['all_five'] or (ext >= 4 and (t or p_5 > p_4))) and not is_palm_up and p_my < 0.25 and p_milk < 0.35:
             prior[CLASS_NAMES.index("5_Five")] *= 4.0
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("4_Four")] *= 0.20
 
         # 9_Nine
         if (g['d_t_i'] < 0.30 and m and r and p) or (r and p and not i and not m):
