@@ -154,7 +154,7 @@ def load_models():
     options = vision.HandLandmarkerOptions(
         base_options=base_options,
         num_hands=2,
-        min_hand_detection_confidence=0.28,
+        min_hand_detection_confidence=0.35,
         min_hand_presence_confidence=0.25
     )
     detector = vision.HandLandmarker.create_from_options(options)
