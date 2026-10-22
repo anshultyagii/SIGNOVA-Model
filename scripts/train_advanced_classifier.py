@@ -169,6 +169,20 @@ def train_advanced_model():
                     all_X.append(feats_rot)
                     all_Y.append(cls_id)
 
+                    # Augmentation 4: Horizontal Flip (Mirror & Left/Right Ambidextrous Invariance)
+                    frame_flip = cv2.flip(frame, 1)
+                    mp_flip = mp.Image(image_format=mp.ImageFormat.SRGB, data=cv2.cvtColor(frame_flip, cv2.COLOR_BGR2RGB))
+                    res_flip = detector.detect(mp_flip)
+                    if res_flip.hand_landmarks:
+                        feats_flip = extract_advanced_gesture_features(res_flip.hand_landmarks, w, h)
+                        all_X.append(feats_flip)
+                        all_Y.append(cls_id)
+                        # Jitter on flipped sample
+                        noise_flip = np.random.normal(0, 0.008, size=feats_flip.shape).astype(np.float32)
+                        noise_flip[0] = 0.0
+                        all_X.append(feats_flip + noise_flip)
+                        all_Y.append(cls_id)
+
             curr_f += 1
 
         cap.release()
