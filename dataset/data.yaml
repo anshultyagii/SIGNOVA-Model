@@ -1,0 +1,29 @@
+names:
+  0: 10_Ten
+  1: 1_One
+  2: 2_Two
+  3: 3_Three
+  4: 4_Four
+  5: 5_Five
+  6: 6_Six
+  7: 7_Seven
+  8: 8_Eight
+  9: 9_Nine
+  10: Drink
+  11: Eat
+  12: Food
+  13: Give
+  14: Go
+  15: Help
+  16: I_Me
+  17: Milk
+  18: My
+  19: Want_Desire_Wish_For
+  20: Water
+  21: We
+  22: What
+  23: Where
+  24: You
+path: F:\SIGNOVA\dataset
+train: images/train
+val: images/val
