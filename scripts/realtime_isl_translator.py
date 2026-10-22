@@ -221,6 +221,10 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
     p_seven = neural_probs[CLASS_NAMES.index("7_Seven")] if neural_probs is not None else 0.0
     p_you = neural_probs[CLASS_NAMES.index("You")] if neural_probs is not None else 0.0
     p_what = neural_probs[CLASS_NAMES.index("What")] if neural_probs is not None else 0.0
+    p_where = neural_probs[CLASS_NAMES.index("Where")] if neural_probs is not None else 0.0
+    p_go = neural_probs[CLASS_NAMES.index("Go")] if neural_probs is not None else 0.0
+    p_give = neural_probs[CLASS_NAMES.index("Give")] if neural_probs is not None else 0.0
+    p_water = neural_probs[CLASS_NAMES.index("Water")] if neural_probs is not None else 0.0
 
     if num_hands >= 2:
         # Two active hands: suppress single-handed digit numbers and single-handed signs
@@ -247,48 +251,58 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         dx_hands = abs(active_hands[0][0].x - active_hands[1][0].x)
         is_stacked_help = has_flat_base and has_fist_hand and dy_hands > 0.05 and dx_hands < 0.25
 
-        if is_stacked_help or (p_help >= 0.30 and p_help > p_milk):
+        # Where requires both hands open with palms facing up and fingers spread, not vertically stacked
+        is_where_open = (g0['count_ext'] >= 3 or g0['all_five']) and (g1['count_ext'] >= 3 or g1['all_five']) and not g0['fist'] and not g1['fist']
+
+        is_true_help = is_stacked_help or (p_help >= 0.35 and p_help > p_milk and has_fist_hand and not is_where_open)
+
+        if is_true_help:
             prior[CLASS_NAMES.index("Help")] *= 8.0
             prior[CLASS_NAMES.index("Milk")] *= 0.001
             prior[CLASS_NAMES.index("Where")] *= 0.001
             prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 0.001
             prior[CLASS_NAMES.index("7_Seven")] *= 0.001
             prior[CLASS_NAMES.index("What")] *= 0.01
-        elif (g0['fist'] and g1['fist']) or (g0['count_ext'] <= 2 and g1['count_ext'] <= 2 and not has_flat_base) or (p_milk >= 0.25 and p_milk > p_help):
+        elif (g0['fist'] and g1['fist']) or (g0['count_ext'] <= 2 and g1['count_ext'] <= 2 and not has_flat_base) or (p_milk >= 0.25 and p_milk > p_help and not is_where_open):
             # Both hands are fists side-by-side: Milk squeeze motion
             prior[CLASS_NAMES.index("Milk")] *= 5.0
             prior[CLASS_NAMES.index("Help")] *= 0.001
             prior[CLASS_NAMES.index("Where")] *= 0.001
             prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 0.01
             prior[CLASS_NAMES.index("7_Seven")] *= 0.001
+        elif is_where_open and not is_stacked_help:
+            if p_where >= 0.15 and p_where > p_what:
+                prior[CLASS_NAMES.index("Where")] *= 5.0
+                prior[CLASS_NAMES.index("What")] *= 0.10
+            elif p_where >= 0.10:
+                prior[CLASS_NAMES.index("Where")] *= 3.5
+            prior[CLASS_NAMES.index("Help")] *= 0.001
+            prior[CLASS_NAMES.index("Milk")] *= 0.001
+        elif p_give >= 0.15 and not is_stacked_help:
+            prior[CLASS_NAMES.index("Give")] *= 4.0
+            prior[CLASS_NAMES.index("What")] *= 0.10
+            prior[CLASS_NAMES.index("Help")] *= 0.01
+            prior[CLASS_NAMES.index("Milk")] *= 0.01
         else:
-            if p_help > p_milk:
+            if not is_where_open and has_fist_hand and p_help > p_milk:
                 prior[CLASS_NAMES.index("Help")] *= 3.0
                 prior[CLASS_NAMES.index("Milk")] *= 0.05
-            else:
+            elif not is_where_open and has_fist_hand:
                 prior[CLASS_NAMES.index("Milk")] *= 2.5
                 prior[CLASS_NAMES.index("Help")] *= 0.10
-
-        # Where in 2-handed mode:
-        # Strictly requires BOTH hands open with palms facing up and fingers spread,
-        # held separately on either side of the body (dx_hands > 0.20)
-        is_where_open = (g0['count_ext'] >= 3 or g0['all_five']) and (g1['count_ext'] >= 3 or g1['all_five'])
-        if is_where_open and not g0['fist'] and not g1['fist'] and dx_hands > 0.20 and not is_stacked_help:
-            prior[CLASS_NAMES.index("Where")] *= 2.5
-        else:
-            prior[CLASS_NAMES.index("Where")] *= 0.001
 
         # Want vs What in 2-handed mode:
         if p_want >= 0.15 and not is_stacked_help:
             prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 3.0
             prior[CLASS_NAMES.index("What")] *= 0.20
-        elif p_what >= 0.15 and not is_stacked_help:
-            prior[CLASS_NAMES.index("What")] *= 3.0
+            prior[CLASS_NAMES.index("Where")] *= 0.10
+        elif p_what >= 0.15 and not is_stacked_help and p_what > p_where and not is_where_open:
+            prior[CLASS_NAMES.index("What")] *= 3.5
             prior[CLASS_NAMES.index("Want_Desire_Wish_For")] *= 0.20
+            prior[CLASS_NAMES.index("Where")] *= 0.20
     else:
-        # Single active hand: In ISL, Milk, Where, Give, We strictly require 2 hands!
+        # Single active hand: In ISL, Milk, Give, We strictly require 2 hands!
         prior[CLASS_NAMES.index("Milk")] *= 0.001
-        prior[CLASS_NAMES.index("Where")] *= 0.001
         prior[CLASS_NAMES.index("Give")] *= 0.01
         prior[CLASS_NAMES.index("We")] *= 0.01
 
@@ -300,6 +314,13 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         is_index_pointing = bool(i and not m and not r and not p)
         # Pointing to chest (I_Me)
         is_pointing_to_chest = (is_index_pointing and d_z_pointing > 0.008 and wrist_y > 0.35)
+
+        # Single hand Where disambiguation (if second hand occluded during video)
+        is_palm_up_single = (normal_y > 0.05)
+        if is_palm_up_single and (g['all_five'] or ext >= 3) and p_where >= 0.15:
+            prior[CLASS_NAMES.index("Where")] *= 3.0
+        else:
+            prior[CLASS_NAMES.index("Where")] *= 0.001
 
         # ----------------- Help Disambiguation on Single Hand -----------------
         # In ISL "Help", one hand (fist with thumb UP) rests on top of the other.
@@ -348,11 +369,15 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
         is_2 = bool(i and m and not r and not p and not is_8)
 
         if is_2:
-            prior[CLASS_NAMES.index("2_Two")] *= 4.0
-            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-            prior[CLASS_NAMES.index("Go")] *= 0.15
-            prior[CLASS_NAMES.index("You")] *= 0.15
-            prior[CLASS_NAMES.index("3_Three")] *= 0.15
+            if p_go >= 0.25 and p_go > p_2:
+                prior[CLASS_NAMES.index("Go")] *= 4.0
+                prior[CLASS_NAMES.index("2_Two")] *= 0.20
+            else:
+                prior[CLASS_NAMES.index("2_Two")] *= 4.0
+                prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+                prior[CLASS_NAMES.index("Go")] *= 0.15
+                prior[CLASS_NAMES.index("You")] *= 0.15
+                prior[CLASS_NAMES.index("3_Three")] *= 0.15
         elif is_8:
             prior[CLASS_NAMES.index("8_Eight")] *= 4.0
             prior[CLASS_NAMES.index("2_Two")] *= 0.10
@@ -374,22 +399,32 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             if is_thumb_up or g['fist'] or p_help >= 0.15:
                 prior[CLASS_NAMES.index("7_Seven")] *= 0.001
 
-        # ----------------- YOU vs 6_Six vs 10_Ten vs 1_One -----------------
-        if (is_pointing_forward or (is_index_pointing and wrist_y > 0.40 and not is_pointing_to_chest and not is_7)) and p_you >= 0.20:
-            prior[CLASS_NAMES.index("You")] *= 4.0
+        # ----------------- YOU vs GO vs 1_One DISAMBIGUATION -----------------
+        is_upright_one = bool(is_index_pointing and (idx_tip.y < idx_mcp.y - 0.015) and not is_pointing_forward and not is_pointing_to_chest and not is_7)
+
+        if is_upright_one:
+            prior[CLASS_NAMES.index("1_One")] *= 5.0
+            prior[CLASS_NAMES.index("You")] *= 0.02
+            prior[CLASS_NAMES.index("Go")] *= 0.02
+            prior[CLASS_NAMES.index("8_Eight")] *= 0.05
+            prior[CLASS_NAMES.index("2_Two")] *= 0.05
             prior[CLASS_NAMES.index("6_Six")] *= 0.05
             prior[CLASS_NAMES.index("10_Ten")] *= 0.05
-            prior[CLASS_NAMES.index("Help")] *= 0.01
-
-        # 1_One: Upright vertical index finger pointing UP
-        if is_index_pointing and not is_pointing_forward and not is_pointing_to_chest and not is_7:
-            if idx_tip.y < idx_mcp.y:
-                prior[CLASS_NAMES.index("1_One")] *= 4.0
-                prior[CLASS_NAMES.index("8_Eight")] *= 0.05
-                prior[CLASS_NAMES.index("2_Two")] *= 0.05
+        elif (is_pointing_forward or d_z_pointing < -0.010) and not is_pointing_to_chest and not is_7:
+            if p_go >= 0.25 and p_go > p_you:
+                prior[CLASS_NAMES.index("Go")] *= 4.0
+                prior[CLASS_NAMES.index("You")] *= 0.20
+                prior[CLASS_NAMES.index("1_One")] *= 0.02
+            elif p_you >= 0.18:
+                prior[CLASS_NAMES.index("You")] *= 4.0
+                prior[CLASS_NAMES.index("Go")] *= 0.20
+                prior[CLASS_NAMES.index("1_One")] *= 0.02
                 prior[CLASS_NAMES.index("6_Six")] *= 0.05
                 prior[CLASS_NAMES.index("10_Ten")] *= 0.05
-                prior[CLASS_NAMES.index("You")] *= 0.10
+                prior[CLASS_NAMES.index("Help")] *= 0.01
+        elif (is_index_pointing or is_2) and p_go >= 0.25 and not is_pointing_to_chest:
+            prior[CLASS_NAMES.index("Go")] *= 3.5
+            prior[CLASS_NAMES.index("You")] *= 0.20
 
         # 6_Six: Pinky only extended
         if (p and not i and not m and not r) and not is_pointing_forward:
@@ -407,11 +442,18 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
 
         # ----------------- WHAT vs WATER -----------------
         is_palm_up = (normal_y > 0.06)
-        if is_palm_up and p_want < 0.15:
-            prior[CLASS_NAMES.index("What")] *= 4.0
-            prior[CLASS_NAMES.index("Water")] *= 0.02  # Water is NEVER palm up!
-            prior[CLASS_NAMES.index("Drink")] *= 0.05
-            prior[CLASS_NAMES.index("Milk")] *= 0.001
+        is_w_shape = bool(i and m and r and not p)
+        if wrist_y <= 0.65 and (is_w_shape or p_water >= 0.18):
+            prior[CLASS_NAMES.index("Water")] *= 5.0
+            prior[CLASS_NAMES.index("What")] *= 0.01
+            prior[CLASS_NAMES.index("Drink")] *= 0.20
+            prior[CLASS_NAMES.index("3_Three")] *= 0.10
+        elif is_palm_up and p_want < 0.15 and not g['fist'] and wrist_y > 0.45 and not is_w_shape:
+            if p_give < 0.20:
+                prior[CLASS_NAMES.index("What")] *= 4.0
+                prior[CLASS_NAMES.index("Water")] *= 0.02
+                prior[CLASS_NAMES.index("Drink")] *= 0.05
+                prior[CLASS_NAMES.index("Milk")] *= 0.001
 
         # 3_Three
         if i and m and r and not p and not is_8:
@@ -441,8 +483,8 @@ def get_symbolic_prior(hand_landmarks_list, orig_w, orig_h, neural_probs=None):
             prior[CLASS_NAMES.index("8_Eight")] *= 0.05
 
     # ----------------- FOOD vs EAT vs DRINK vs WATER -----------------
-    # In ISL, Eat and Food occur at chin/mouth elevation (wrist_y <= 0.56)
-    if wrist_y <= 0.56:
+    # In ISL, Eat, Food, Drink, Water occur at chin/mouth/chest elevation (wrist_y <= 0.65)
+    if wrist_y <= 0.65:
         g = analyze_hand_geometry(active_hands[0], orig_w, orig_h)
         is_pinched_mouth = (g['d_t_i'] < 0.30 and g['count_ext'] <= 1)
         is_open_food = (g['count_ext'] >= 3 or g['d_t_i'] > 0.35)
